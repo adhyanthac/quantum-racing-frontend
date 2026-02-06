@@ -1,22 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
-// Generate unique client ID
 const CLIENT_ID = Math.random().toString(36).substring(7);
 
 function App() {
-  const [gameState, setGameState] = useState('MENU'); // MENU, PLAYING, GAMEOVER
+  const [gameState, setGameState] = useState('MENU');
   const [vehicleData, setVehicleData] = useState(null);
   const [obstaclesA, setObstaclesA] = useState([]);
   const [obstaclesB, setObstaclesB] = useState([]);
   const [distance, setDistance] = useState(10000);
   const [paused, setPaused] = useState(false);
+  const [crashState, setCrashState] = useState(null); // Store crash state
   const wsRef = useRef(null);
 
-  // WebSocket connection
   useEffect(() => {
     if (gameState === 'PLAYING') {
-      // Connect to backend - CHANGE THIS URL to your deployed backend
       const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${CLIENT_ID}`);
       wsRef.current = ws;
 
@@ -35,8 +33,15 @@ function App() {
           setDistance(data.distance_to_finish);
           setPaused(data.paused);
           
-          // Check if game is over
-          if (!data.running && data.vehicle) {
+          if (!data.running && data.vehicle && !data.vehicle.alive) {
+            // Game over - save the crash state
+            setCrashState({
+              vehicle: data.vehicle,
+              obstaclesA: data.obstacles_A,
+              obstaclesB: data.obstacles_B
+            });
+            setGameState('GAMEOVER');
+          } else if (!data.running) {
             setGameState('GAMEOVER');
           }
         }
@@ -52,7 +57,6 @@ function App() {
     }
   }, [gameState]);
 
-  // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!wsRef.current || gameState !== 'PLAYING') return;
@@ -68,8 +72,6 @@ function App() {
           ws.send(JSON.stringify({ action: 'shift_left' }));
         } else if (e.key === 'ArrowRight' || e.key === 'd') {
           ws.send(JSON.stringify({ action: 'shift_right' }));
-        } else if (e.key === 'm' || e.key === 'M') {
-          ws.send(JSON.stringify({ action: 'measure' }));
         }
       }
     };
@@ -79,15 +81,21 @@ function App() {
   }, [gameState, paused]);
 
   const startGame = () => {
+    setCrashState(null);
     setGameState('PLAYING');
   };
 
   const backToMenu = () => {
+    setCrashState(null);
     setGameState('MENU');
   };
 
-  // Calculate progress
   const progress = vehicleData ? ((10000 - distance) / 10000) * 100 : 0;
+
+  // Use crash state if game is over, otherwise use live state
+  const displayVehicle = crashState ? crashState.vehicle : vehicleData;
+  const displayObstaclesA = crashState ? crashState.obstaclesA : obstaclesA;
+  const displayObstaclesB = crashState ? crashState.obstaclesB : obstaclesB;
 
   return (
     <div className="App">
@@ -95,25 +103,29 @@ function App() {
         <div className="menu-screen">
           <div className="menu-content">
             <h1 className="title">Q-RACING</h1>
-            <p className="subtitle">Quantum Superposition & Entanglement Simulator</p>
+            <p className="subtitle">Quantum Mechanics Racing Simulator</p>
             
             <div className="concepts">
               <div className="concept">
-                <span className="icon">🌀</span>
-                <p>SUPERPOSITION: Your vehicle exists in multiple lanes simultaneously</p>
+                <p><strong>SUPERPOSITION:</strong> Your vehicle exists in multiple lanes simultaneously</p>
               </div>
               <div className="concept">
-                <span className="icon">⚛️</span>
-                <p>ENTANGLEMENT: Two universes connected - actions affect both instantly</p>
+                <p><strong>ENTANGLEMENT:</strong> Two universes connected - actions affect both instantly</p>
               </div>
             </div>
 
             <div className="controls-info">
               <h3>Controls</h3>
-              <p><kbd>H</kbd> - Hadamard Gate (create superposition)</p>
-              <p><kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd> <kbd>D</kbd> - Shift quantum state</p>
-              <p><kbd>M</kbd> - Measure and collapse to definite state</p>
+              <p><kbd>H</kbd> - Hadamard Gate (enter superposition - 50% survival chance if you hit obstacle)</p>
+              <p><kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd> <kbd>D</kbd> - Move left/right</p>
               <p><kbd>ESC</kbd> or <kbd>P</kbd> - Pause game</p>
+            </div>
+
+            <div className="strategy-info">
+              <h3>Strategy</h3>
+              <p>Classical state (normal): Hitting any obstacle = instant death</p>
+              <p>Superposition state (H key): Hitting obstacle = 50% chance to survive</p>
+              <p>Use Hadamard wisely to gamble your way through tough spots!</p>
             </div>
 
             <button className="start-btn" onClick={startGame}>
@@ -125,14 +137,12 @@ function App() {
         </div>
       )}
 
-      {gameState === 'PLAYING' && vehicleData && (
+      {gameState === 'PLAYING' && displayVehicle && (
         <div className="game-screen">
-          {/* Progress Bar */}
           <div className="progress-bar-container">
             <div className="progress-bar" style={{ width: `${progress}%` }}></div>
           </div>
 
-          {/* Game Area */}
           <div className="universes-container">
             
             {/* Universe A */}
@@ -140,12 +150,11 @@ function App() {
               <h2 className="universe-label">UNIVERSE A</h2>
               
               <div className="game-canvas">
-                {/* Obstacles */}
-                {obstaclesA.map((obs, idx) => (
+                {displayObstaclesA.map((obs, idx) => (
                   obs.lanes.map(lane => (
                     <div
                       key={`a-${idx}-${lane}`}
-                      className="obstacle obstacle-a"
+                      className={`obstacle ${obs.is_measure ? 'measure-obstacle' : ''}`}
                       style={{
                         left: `${lane * 25}%`,
                         top: `${(obs.y / 800) * 100}%`
@@ -154,8 +163,7 @@ function App() {
                   ))
                 ))}
 
-                {/* Vehicle (with superposition visualization) */}
-                {vehicleData.alive && vehicleData.amplitudes.map((amp, lane) => {
+                {displayVehicle.alive && displayVehicle.amplitudes.map((amp, lane) => {
                   const prob = amp * amp;
                   if (prob < 0.01) return null;
                   return (
@@ -171,14 +179,13 @@ function App() {
                   );
                 })}
 
-                {!vehicleData.alive && (
-                  <div className="crash-msg">COLLAPSE</div>
+                {!displayVehicle.alive && (
+                  <div className="crash-msg">WAVEFUNCTION COLLAPSED</div>
                 )}
               </div>
 
-              {/* Probability Bars */}
               <div className="probability-bars">
-                {vehicleData.amplitudes.map((amp, idx) => (
+                {displayVehicle.amplitudes.map((amp, idx) => (
                   <div key={`prob-a-${idx}`} className="prob-bar-container">
                     <div 
                       className="prob-bar prob-bar-a"
@@ -189,7 +196,6 @@ function App() {
               </div>
             </div>
 
-            {/* Divider */}
             <div className="divider"></div>
 
             {/* Universe B */}
@@ -197,12 +203,11 @@ function App() {
               <h2 className="universe-label">UNIVERSE B</h2>
               
               <div className="game-canvas">
-                {/* Obstacles */}
-                {obstaclesB.map((obs, idx) => (
+                {displayObstaclesB.map((obs, idx) => (
                   obs.lanes.map(lane => (
                     <div
                       key={`b-${idx}-${lane}`}
-                      className="obstacle obstacle-b"
+                      className={`obstacle ${obs.is_measure ? 'measure-obstacle' : ''}`}
                       style={{
                         left: `${lane * 25}%`,
                         top: `${(obs.y / 800) * 100}%`
@@ -211,8 +216,7 @@ function App() {
                   ))
                 ))}
 
-                {/* Vehicle (entangled - same quantum state) */}
-                {vehicleData.alive && vehicleData.amplitudes.map((amp, lane) => {
+                {displayVehicle.alive && displayVehicle.amplitudes.map((amp, lane) => {
                   const prob = amp * amp;
                   if (prob < 0.01) return null;
                   return (
@@ -228,14 +232,13 @@ function App() {
                   );
                 })}
 
-                {!vehicleData.alive && (
-                  <div className="crash-msg">COLLAPSE</div>
+                {!displayVehicle.alive && (
+                  <div className="crash-msg">WAVEFUNCTION COLLAPSED</div>
                 )}
               </div>
 
-              {/* Probability Bars */}
               <div className="probability-bars">
-                {vehicleData.amplitudes.map((amp, idx) => (
+                {displayVehicle.amplitudes.map((amp, idx) => (
                   <div key={`prob-b-${idx}`} className="prob-bar-container">
                     <div 
                       className="prob-bar prob-bar-b"
@@ -247,43 +250,49 @@ function App() {
             </div>
           </div>
 
-          {/* HUD */}
           <div className="hud">
-            <div className="entanglement-indicator">⚛ ENTANGLED SUPERPOSITION ⚛</div>
-            <div className="score">SCORE: {vehicleData.score}</div>
+            <div className="entanglement-indicator">ENTANGLED SUPERPOSITION</div>
+            <div className="score">SCORE: {displayVehicle.score}</div>
             <div className="controls-reminder">
-              H: Hadamard | ←→: Shift | M: Measure | ESC: Pause
+              H: Hadamard (50% survival) | ←→: Move | ESC: Pause
             </div>
           </div>
 
-          {/* Pause Overlay */}
           {paused && (
             <div className="pause-overlay">
               <h1>PAUSED</h1>
               <p>Press ESC or P to resume</p>
             </div>
           )}
+
+          {!displayVehicle.alive && gameState === 'PLAYING' && (
+            <div className="gameover-overlay">
+              <h1>GAME OVER</h1>
+              <div className="final-score">SCORE: {displayVehicle.score}</div>
+              <button className="retry-btn" onClick={startGame}>RETRY</button>
+              <button className="menu-btn" onClick={backToMenu}>MAIN MENU</button>
+            </div>
+          )}
         </div>
       )}
 
-      {gameState === 'GAMEOVER' && vehicleData && (
+      {gameState === 'GAMEOVER' && displayVehicle && (
         <div className="gameover-screen">
           <div className="gameover-content">
-            <h1 className={vehicleData.score > 800 ? 'success' : 'failure'}>
-              {vehicleData.score > 800 ? 'QUANTUM SUCCESS!' : 'WAVEFUNCTION COLLAPSED'}
+            <h1 className={displayVehicle.score > 500 ? 'success' : 'failure'}>
+              {displayVehicle.score > 500 ? 'QUANTUM SUCCESS!' : 'WAVEFUNCTION COLLAPSED'}
             </h1>
             <p className="gameover-message">
-              {vehicleData.score > 800 
+              {displayVehicle.score > 500 
                 ? 'You navigated both entangled universes!' 
-                : 'Your quantum state was measured by an obstacle'}
+                : 'The measurement collapsed your quantum state'}
             </p>
 
-            <div className="final-score">FINAL SCORE: {vehicleData.score}</div>
+            <div className="final-score">FINAL SCORE: {displayVehicle.score}</div>
 
             <div className="stats">
-              <p>Hadamard Gates Used: {vehicleData.hadamard_uses}</p>
-              <p>Successful Measurements: {vehicleData.successful_measures}</p>
-              <p>Time Survived: {Math.floor(vehicleData.frames_alive / 60)}s</p>
+              <p>Hadamard Gates Used: {displayVehicle.hadamard_uses}</p>
+              <p>Time Survived: {Math.floor(displayVehicle.frames_alive / 60)}s</p>
             </div>
 
             <div className="education">
@@ -291,9 +300,8 @@ function App() {
               <p>Entanglement: Particles connected across space, changing together instantly</p>
             </div>
 
-            <button className="menu-btn" onClick={backToMenu}>
-              MAIN MENU
-            </button>
+            <button className="retry-btn" onClick={startGame}>RETRY</button>
+            <button className="menu-btn" onClick={backToMenu}>MAIN MENU</button>
           </div>
         </div>
       )}

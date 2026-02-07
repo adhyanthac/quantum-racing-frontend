@@ -1,13 +1,113 @@
+/* ===== Y2K 2000s ROOT STYLES ===== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #0a0a1a;
+  color: #ffffff;
+  overflow: hidden;
+  min-height: 100vh;
+
+  /* Y2K Starfield background */
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #ff00ff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 40px 70px, #00d4ff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 130px 80px, #ff00ff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 160px 30px, #00d4ff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 200px 60px, #ffffff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 240px 90px, #ff00ff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 280px 20px, #00d4ff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 320px 50px, #ffffff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 350px 100px, #ff00ff, rgba(0, 0, 0, 0));
+  background-size: 400px 150px;
+  background-color: #0a0a1a;
+  animation: starfield-drift 60s linear infinite;
+}
+
+@keyframes starfield-drift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 400px 150px;
+  }
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'Courier New', source-code-pro, Menlo, Monaco, Consolas, monospace;
+  background: rgba(0, 212, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #00d4ff;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(255, 0, 255, 0.4);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(255, 0, 255, 0.4);
+  color: #ffffff;
+}
+
+/* Custom scrollbar - Y2K style */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a1a;
+  border: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff00ff, #00d4ff);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00d4ff, #ff00ff);
+}
+
+/* Focus states */
+*:focus {
+  outline: 2px solid #ff00ff;
+  outline-offset: 2px;
+}
+
+/* Link styling */
+a {
+  color: #00d4ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+}
+
+/* Root element */
+#root {
+  min-height: 100vh;
+  position: relative;
 }

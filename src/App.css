@@ -1,19 +1,712 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #000; color: #00f2ff; font-family: 'Courier New', monospace; overflow: hidden; }
+/* ===== Y2K 2000s AESTHETIC CSS ===== */
+/* Quantum Racing Pro - Retro Futurism Edition */
 
-.menu-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(#111, #000); }
-.title { font-size: 5rem; text-shadow: 3px 3px #f00; margin-bottom: 2rem; }
-.start-btn { padding: 1rem 2rem; background: none; border: 2px solid #00f2ff; color: #00f2ff; font-size: 1.5rem; cursor: pointer; box-shadow: 0 0 10px #00f2ff; }
-.start-btn:hover { background: #00f2ff; color: #000; }
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&display=swap');
 
-.game-area { display: flex; height: 100vh; width: 100vw; }
-.pane { flex: 1; position: relative; border: 1px solid #222; background: #050505; }
-.divider { position: absolute; left: 50%; height: 100%; width: 2px; background: repeating-linear-gradient(to bottom, #333 0, #333 20px, transparent 20px, transparent 40px); }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-.car { position: absolute; bottom: 15%; width: 40px; height: 70px; border-radius: 4px; transform: translateX(-50%); transition: opacity 0.1s; }
-.red { background: #f00; box-shadow: 0 0 15px #f00; }
-.blue { background: #00f; box-shadow: 0 0 15px #00f; }
-.car::after { content: ''; position: absolute; top: 10px; left: 5px; width: 30px; height: 15px; background: #222; } /* Windshield */
+:root {
+  --chromatic-pink: #ff00ff;
+  --chromatic-blue: #00d4ff;
+  --chromatic-purple: #9d4edd;
+  --chrome-silver: #c0c0c0;
+  --cyber-orange: #ff6600;
+  --deep-space: #0a0a1a;
+  --holographic: linear-gradient(135deg, #ff00ff, #00d4ff, #ff00ff, #39ff14);
+}
 
-.laser { position: absolute; height: 5px; width: 50%; background: #fff; box-shadow: 0 0 15px #00f2ff; }
-.score-hud { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; }
+body {
+  background: var(--deep-space);
+  color: white;
+  font-family: 'Orbitron', 'Arial Black', sans-serif;
+  overflow: hidden;
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="%23ff00ff" opacity="0.8"/><circle cx="16" cy="16" r="4" fill="%2300d4ff"/></svg>'), auto;
+}
+
+/* ===== SCANLINE OVERLAY ===== */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline-flicker 0.1s infinite;
+}
+
+@keyframes scanline-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.97; }
+}
+
+/* ===== MENU SCREEN ===== */
+.menu-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(157, 78, 221, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(0, 212, 255, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 0, 255, 0.15) 0%, transparent 40%),
+    linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating orbs background */
+.menu-screen::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 0, 255, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float-orb 8s ease-in-out infinite;
+  top: 10%;
+  left: 10%;
+  filter: blur(40px);
+}
+
+.menu-screen::after {
+  content: '';
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float-orb 6s ease-in-out infinite reverse;
+  bottom: 20%;
+  right: 15%;
+  filter: blur(40px);
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.1); }
+  66% { transform: translate(-20px, 30px) scale(0.9); }
+}
+
+/* ===== Y2K CHROME TITLE ===== */
+.title {
+  font-family: 'Audiowide', 'Orbitron', sans-serif;
+  font-size: 5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  position: relative;
+  margin-bottom: 3rem;
+  z-index: 10;
+  
+  /* Chrome/metallic gradient effect */
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #c0c0c0 20%,
+    #808080 40%,
+    #ffffff 50%,
+    #a0a0a0 60%,
+    #d0d0d0 80%,
+    #ffffff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Glow and shadow layers */
+  text-shadow: 
+    0 0 20px rgba(255, 0, 255, 0.8),
+    0 0 40px rgba(0, 212, 255, 0.6),
+    0 0 60px rgba(255, 0, 255, 0.4);
+  
+  filter: drop-shadow(0 4px 0 #ff00ff) drop-shadow(0 8px 0 #00d4ff);
+  animation: chrome-pulse 3s ease-in-out infinite;
+}
+
+.title::before {
+  content: 'Q-RACING PRO';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  background: linear-gradient(90deg, #ff00ff, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+.title::after {
+  content: 'Q-RACING PRO';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  background: linear-gradient(90deg, #00d4ff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  z-index: -2;
+  opacity: 0.5;
+}
+
+@keyframes chrome-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 4px 0 #ff00ff) drop-shadow(0 8px 0 #00d4ff);
+  }
+  50% { 
+    filter: drop-shadow(0 4px 0 #00d4ff) drop-shadow(0 8px 0 #ff00ff) brightness(1.2);
+  }
+}
+
+/* ===== Y2K BUBBLE BUTTON ===== */
+.start-btn {
+  padding: 1.2rem 3rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  border: none;
+  border-radius: 50px;
+  
+  /* Glossy bubble gradient */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 0, 255, 0.6) 20%,
+    rgba(157, 78, 221, 0.8) 60%,
+    rgba(0, 212, 255, 0.6) 100%
+  );
+  
+  box-shadow: 
+    inset 0 2px 10px rgba(255, 255, 255, 0.6),
+    inset 0 -5px 20px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 0, 255, 0.5),
+    0 0 40px rgba(0, 212, 255, 0.3),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: button-glow 2s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.start-btn::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 15%;
+  width: 70%;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), transparent);
+  border-radius: 50px;
+  pointer-events: none;
+}
+
+.start-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.start-btn:hover {
+  transform: scale(1.08) translateY(-3px);
+  box-shadow: 
+    inset 0 2px 10px rgba(255, 255, 255, 0.8),
+    inset 0 -5px 20px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(255, 0, 255, 0.8),
+    0 0 80px rgba(0, 212, 255, 0.5),
+    0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.start-btn:hover::after {
+  left: 100%;
+}
+
+.start-btn:active {
+  transform: scale(0.98);
+}
+
+@keyframes button-glow {
+  0%, 100% { 
+    box-shadow: 
+      inset 0 2px 10px rgba(255, 255, 255, 0.6),
+      inset 0 -5px 20px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 0, 255, 0.5),
+      0 0 40px rgba(0, 212, 255, 0.3),
+      0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+  50% { 
+    box-shadow: 
+      inset 0 2px 10px rgba(255, 255, 255, 0.8),
+      inset 0 -5px 20px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(0, 212, 255, 0.7),
+      0 0 60px rgba(255, 0, 255, 0.5),
+      0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ===== CREDITS ===== */
+.credits {
+  margin-top: 3rem;
+  font-size: 0.9rem;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  z-index: 10;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  animation: credits-fade 4s ease-in-out infinite;
+}
+
+@keyframes credits-fade {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ===== GAME AREA ===== */
+.game-area {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(180deg, #0a0a2a 0%, #1a0a3a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.game-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 212, 255, 0.03) 2px,
+      rgba(0, 212, 255, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== GAME PANE ===== */
+.pane {
+  flex: 1;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 100%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #050510 0%, #0a0a20 100%);
+  border: 2px solid;
+  border-image: linear-gradient(180deg, #ff00ff, #00d4ff) 1;
+  overflow: hidden;
+}
+
+.pane::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 48%,
+      rgba(255, 0, 255, 0.1) 48%,
+      rgba(255, 0, 255, 0.1) 52%,
+      transparent 52%,
+      transparent 100%
+    );
+  pointer-events: none;
+}
+
+/* ===== LANE DIVIDER ===== */
+.divider {
+  position: absolute;
+  left: 50%;
+  height: 100%;
+  width: 4px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #ff00ff 0px,
+    #ff00ff 30px,
+    transparent 30px,
+    transparent 60px
+  );
+  box-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.8),
+    0 0 20px rgba(255, 0, 255, 0.5);
+  animation: divider-glow 1.5s ease-in-out infinite;
+  transform: translateX(-50%);
+}
+
+@keyframes divider-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.5);
+  }
+}
+
+/* ===== Y2K CARS ===== */
+.car {
+  position: absolute;
+  bottom: 12%;
+  width: 50px;
+  height: 80px;
+  transform: translateX(-50%);
+  transition: opacity 0.15s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+/* Red car - Universe A */
+.red {
+  background: linear-gradient(
+    180deg,
+    #ff6699 0%,
+    #ff0066 30%,
+    #cc0052 60%,
+    #ff3377 100%
+  );
+  border-radius: 8px 8px 5px 5px;
+  box-shadow: 
+    inset 0 10px 20px rgba(255, 255, 255, 0.4),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 0, 102, 0.8),
+    0 0 60px rgba(255, 0, 102, 0.4),
+    0 5px 20px rgba(0, 0, 0, 0.5);
+  animation: car-hover 0.5s ease-in-out infinite;
+}
+
+/* Blue car - Universe B */
+.blue {
+  background: linear-gradient(
+    180deg,
+    #66ccff 0%,
+    #0099ff 30%,
+    #0066cc 60%,
+    #3399ff 100%
+  );
+  border-radius: 8px 8px 5px 5px;
+  box-shadow: 
+    inset 0 10px 20px rgba(255, 255, 255, 0.4),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 153, 255, 0.8),
+    0 0 60px rgba(0, 153, 255, 0.4),
+    0 5px 20px rgba(0, 0, 0, 0.5);
+  animation: car-hover 0.5s ease-in-out infinite reverse;
+}
+
+/* Car windshield */
+.car::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 8px;
+  width: 34px;
+  height: 20px;
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.6), rgba(0, 0, 0, 0.8));
+  border-radius: 4px;
+  box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Car glow trail */
+.car::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 50px;
+  border-radius: 50%;
+  filter: blur(10px);
+}
+
+.red::after {
+  background: linear-gradient(180deg, rgba(255, 0, 102, 0.6), transparent);
+}
+
+.blue::after {
+  background: linear-gradient(180deg, rgba(0, 153, 255, 0.6), transparent);
+}
+
+@keyframes car-hover {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* ===== LASERS ===== */
+.laser {
+  position: absolute;
+  height: 8px;
+  width: 48%;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #00ffff 20%,
+    #ffffff 50%,
+    #00ffff 80%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 0 15px #00ffff,
+    0 0 30px #00ffff,
+    0 0 45px rgba(0, 255, 255, 0.5);
+  animation: laser-pulse 0.3s ease-in-out infinite;
+  z-index: 5;
+}
+
+@keyframes laser-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff; }
+  50% { opacity: 0.8; box-shadow: 0 0 25px #ff00ff, 0 0 50px #ff00ff; }
+}
+
+/* ===== SCORE HUD ===== */
+.score-hud {
+  position: fixed;
+  top: 25px;
+  right: 30px;
+  font-family: 'Orbitron', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  z-index: 100;
+  
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #00d4ff 50%,
+    #ff00ff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  text-shadow: none;
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.8));
+  animation: score-pulse 1s ease-in-out infinite;
+}
+
+.score-hud::before {
+  content: '⚡';
+  margin-right: 10px;
+  filter: none;
+  -webkit-text-fill-color: #ff00ff;
+}
+
+@keyframes score-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.8));
+  }
+  50% { 
+    filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8));
+  }
+}
+
+/* ===== CONTROLS HUD ===== */
+.controls-hud {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 30px;
+  z-index: 100;
+}
+
+.control-key {
+  padding: 10px 20px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 0, 255, 0.5);
+  border-radius: 10px;
+  color: #00d4ff;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== GAME OVER OVERLAY ===== */
+.game-over {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.5s ease;
+}
+
+.game-over h2 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: 4rem;
+  background: linear-gradient(90deg, #ff0066, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glitch 0.5s infinite;
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -2px); }
+  75% { transform: translate(-2px, -2px); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== SUPERPOSITION INDICATOR ===== */
+.superposition-active {
+  position: fixed;
+  top: 25px;
+  left: 30px;
+  padding: 10px 25px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, rgba(255, 0, 255, 0.3), rgba(0, 212, 255, 0.3));
+  border: 2px solid;
+  border-image: linear-gradient(90deg, #ff00ff, #00d4ff) 1;
+  border-radius: 5px;
+  color: #ffffff;
+  z-index: 100;
+  animation: superposition-glow 1s ease-in-out infinite;
+}
+
+@keyframes superposition-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    border-image: linear-gradient(90deg, #ff00ff, #00d4ff) 1;
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    border-image: linear-gradient(90deg, #00d4ff, #ff00ff) 1;
+  }
+}
+
+/* ===== SPLIT SCREEN EFFECT ===== */
+.game-area.split {
+  gap: 4px;
+}
+
+.game-area.split::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #ff00ff, #00d4ff, #ff00ff);
+  box-shadow: 
+    0 0 20px rgba(255, 0, 255, 0.8),
+    0 0 40px rgba(0, 212, 255, 0.6);
+  z-index: 50;
+  animation: split-glow 2s ease-in-out infinite;
+}
+
+@keyframes split-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.6);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.8), 0 0 80px rgba(255, 0, 255, 0.6);
+  }
+}
+
+/* ===== UNIVERSE LABELS ===== */
+.universe-label {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+  padding: 8px 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  z-index: 20;
+}
+
+.universe-a {
+  color: #ff0066;
+  border: 1px solid rgba(255, 0, 102, 0.5);
+  text-shadow: 0 0 10px rgba(255, 0, 102, 0.8);
+}
+
+.universe-b {
+  color: #0099ff;
+  border: 1px solid rgba(0, 153, 255, 0.5);
+  text-shadow: 0 0 10px rgba(0, 153, 255, 0.8);
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+  }
+  
+  .start-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .credits {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+  
+  .car {
+    width: 35px;
+    height: 60px;
+  }
+  
+  .score-hud {
+    font-size: 1.2rem;
+    top: 15px;
+    right: 15px;
+  }
+}

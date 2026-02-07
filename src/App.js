@@ -26,6 +26,7 @@ function App() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [clientId] = useState(() => Math.random().toString(36).substring(7));
   const wsRef = useRef(null);
+  const gameEndedRef = useRef(false); // REF to track game ended state inside WebSocket handler
   const scoreSavedRef = useRef(false);
 
   // Load settings and scores from localStorage
@@ -59,70 +60,95 @@ function App() {
     });
   }, [settings.playerName]);
 
+  // MAIN WEBSOCKET EFFECT - Only depends on gameState!
   useEffect(() => {
-    if (gameState === 'PLAYING') {
-      // Reset all game state
-      setGameEnded(false);
-      setGameWon(false);
-      setFinalScore(0);
-      setFinalProgress(0);
-      setData(null);
-      scoreSavedRef.current = false;
-
-      const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}`);
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        ws.send(JSON.stringify({
-          action: 'set_speed',
-          speed: settings.gameSpeed
-        }));
-      };
-
-      ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data);
-        const gameData = msg.data;
-
-        // CRITICAL: If game has ended, ignore all further messages
-        if (gameEnded) {
-          return;
-        }
-
-        // Game is still running - update state
-        if (msg.type === 'game_state') {
-          setData(gameData);
-          setIsPaused(gameData.paused || false);
-        }
-
-        // Game just ended - STOP everything
-        if (msg.type === 'game_over' || msg.type === 'game_won') {
-          // Save the final state
-          setFinalScore(gameData.score);
-          setFinalProgress(gameData.progress);
-          setGameWon(msg.type === 'game_won');
-          setGameEnded(true);
-          setData(gameData); // Keep last state for crash display
-
-          // Save score once
-          if (!scoreSavedRef.current && gameData.score > 0) {
-            scoreSavedRef.current = true;
-            saveScore(gameData.score, msg.type === 'game_won');
-          }
-
-          // Close WebSocket - we don't need more messages
-          ws.close();
-        }
-      };
-
-      ws.onerror = (err) => console.error('WebSocket error:', err);
-
-      return () => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.close();
-        }
-      };
+    if (gameState !== 'PLAYING') {
+      return; // Not playing, do nothing
     }
-  }, [gameState, clientId, settings.gameSpeed, saveScore, gameEnded]);
+
+    // Reset refs when starting new game
+    gameEndedRef.current = false;
+    scoreSavedRef.current = false;
+
+    // Reset UI state
+    setGameEnded(false);
+    setGameWon(false);
+    setFinalScore(0);
+    setFinalProgress(0);
+    setData(null);
+
+    const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}`);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      ws.send(JSON.stringify({
+        action: 'set_speed',
+        speed: settings.gameSpeed
+      }));
+    };
+
+    ws.onmessage = (e) => {
+      // CRITICAL: Check ref (not state) to prevent processing after game ended
+      if (gameEndedRef.current) {
+        return; // Game ended, ignore ALL messages
+      }
+
+      const msg = JSON.parse(e.data);
+      const gameData = msg.data;
+
+      // Game is still running
+      if (msg.type === 'game_state') {
+        setData(gameData);
+        setIsPaused(gameData.paused || false);
+      }
+
+      // GAME OVER - Set ref IMMEDIATELY to block all future messages
+      if (msg.type === 'game_over' || msg.type === 'game_won') {
+        gameEndedRef.current = true; // Block all future messages FIRST
+
+        // Update UI state
+        setFinalScore(gameData.score);
+        setFinalProgress(gameData.progress);
+        setGameWon(msg.type === 'game_won');
+        setGameEnded(true);
+        setData(gameData);
+
+        // Save score once
+        if (!scoreSavedRef.current && gameData.score > 0) {
+          scoreSavedRef.current = true;
+          const newScore = {
+            score: gameData.score,
+            date: new Date().toLocaleString(),
+            id: Date.now(),
+            won: msg.type === 'game_won',
+            playerName: settings.playerName
+          };
+          setScores(prev => {
+            const updatedScores = [newScore, ...prev].slice(0, 10);
+            localStorage.setItem('quantumRacingScores', JSON.stringify(updatedScores));
+            return updatedScores;
+          });
+        }
+
+        // Close WebSocket
+        console.log('Game ended, closing WebSocket');
+        ws.close();
+      }
+    };
+
+    ws.onerror = (err) => console.error('WebSocket error:', err);
+    ws.onclose = () => console.log('WebSocket closed');
+
+    // Cleanup on unmount or gameState change
+    return () => {
+      console.log('Cleaning up WebSocket');
+      gameEndedRef.current = true; // Prevent any late messages
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        ws.close();
+      }
+    };
+  }, [gameState, clientId]); // ONLY gameState and clientId - NO other dependencies!
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -431,10 +457,10 @@ function App() {
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
-            {/* Night F1 Racing Scene */}
+            {/* F1 Race Car on Track */}
             <img
-              src="https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=1920&q=80"
-              alt="F1 Night Racing"
+              src="https://images.unsplash.com/photo-1504707748692-419802cf939d?w=1920&q=80"
+              alt="F1 Racing Night"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>

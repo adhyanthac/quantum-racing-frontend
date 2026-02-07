@@ -12,9 +12,10 @@ function App() {
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [scores, setScores] = useState([]);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
   const wsRef = useRef(null);
 
-  // Load scores from localStorage on mount
+  // Load scores from localStorage
   useEffect(() => {
     const savedScores = localStorage.getItem('quantumRacingScores');
     if (savedScores) {
@@ -23,19 +24,21 @@ function App() {
   }, []);
 
   // Save score when game ends
-  const saveScore = useCallback((score) => {
+  const saveScore = useCallback((score, won) => {
     const newScore = {
       score,
       date: new Date().toLocaleString(),
-      id: Date.now()
+      id: Date.now(),
+      won
     };
-    const updatedScores = [newScore, ...scores].slice(0, 10); // Keep last 10
+    const updatedScores = [newScore, ...scores].slice(0, 10);
     setScores(updatedScores);
     localStorage.setItem('quantumRacingScores', JSON.stringify(updatedScores));
   }, [scores]);
 
   useEffect(() => {
     if (gameState === 'PLAYING') {
+      setGameEnded(false);
       const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${CLIENT_ID}`);
       wsRef.current = ws;
 
@@ -45,28 +48,29 @@ function App() {
         setData(gameData);
         setIsPaused(gameData.paused || false);
 
-        // Save score when game ends
-        if (msg.type === 'game_over' && gameData.score > 0) {
-          saveScore(gameData.score);
+        // Mark game as ended but don't auto-restart
+        if ((msg.type === 'game_over' || msg.type === 'game_won') && !gameEnded) {
+          setGameEnded(true);
+          if (gameData.score > 0) {
+            saveScore(gameData.score, msg.type === 'game_won');
+          }
         }
       };
 
       ws.onerror = (err) => console.error('WebSocket error:', err);
       return () => ws.close();
     }
-  }, [gameState, saveScore]);
+  }, [gameState, gameEnded, saveScore]);
 
   useEffect(() => {
     const handleKey = (e) => {
-      if (!wsRef.current || gameState !== 'PLAYING') return;
+      if (!wsRef.current || gameState !== 'PLAYING' || gameEnded) return;
 
-      // Pause with Escape or P
       if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
         wsRef.current.send(JSON.stringify({ action: 'pause' }));
         return;
       }
 
-      // Don't process game controls if paused
       if (isPaused) return;
 
       if (e.key.toLowerCase() === 'h') {
@@ -81,7 +85,7 @@ function App() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [gameState, isPaused]);
+  }, [gameState, isPaused, gameEnded]);
 
   const getProbs = () => {
     if (!data) return { a: [1, 0], b: [1, 0] };
@@ -91,9 +95,11 @@ function App() {
 
   const probs = getProbs();
   const inSuperposition = data?.quantum_vehicle?.in_superposition;
+  const progress = data?.progress || 0;
+  const gameWon = data?.game_won || false;
 
   const handlePause = () => {
-    if (wsRef.current) {
+    if (wsRef.current && !gameEnded) {
       wsRef.current.send(JSON.stringify({ action: 'pause' }));
     }
   };
@@ -103,6 +109,7 @@ function App() {
       wsRef.current.send(JSON.stringify({ action: 'restart' }));
       setData(null);
       setIsPaused(false);
+      setGameEnded(false);
     }
   };
 
@@ -112,6 +119,7 @@ function App() {
     }
     setData(null);
     setIsPaused(false);
+    setGameEnded(false);
     setGameState('MENU');
   };
 
@@ -121,7 +129,6 @@ function App() {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
-      // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = GAME_URL;
       document.body.appendChild(textArea);
@@ -138,11 +145,17 @@ function App() {
     localStorage.removeItem('quantumRacingScores');
   };
 
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="App">
       <div className="scanlines"></div>
 
-      {/* ===== QUANTUM MODAL ===== */}
+      {/* Quantum Modal */}
       {showQuantumModal && (
         <div className="modal-overlay" onClick={() => setShowQuantumModal(false)}>
           <div className="modal quantum-modal" onClick={e => e.stopPropagation()}>
@@ -161,7 +174,7 @@ function App() {
 
             <div className="modal-section">
               <h3>🎯 Objective</h3>
-              <p>Avoid the incoming lasers! Use quantum mechanics to your advantage by existing in multiple states simultaneously.</p>
+              <p>Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics. The progress bar shows how far you've come.</p>
             </div>
 
             <div className="modal-section">
@@ -169,33 +182,20 @@ function App() {
               <div className="quantum-explanation">
                 <div className="quantum-concept">
                   <h4>🌀 Superposition</h4>
-                  <p>Just like Schrödinger's cat, your car exists in <strong>multiple lanes simultaneously</strong> until observed (hit by a laser). Press H to enter this quantum state!</p>
+                  <p>Just like Schrödinger's cat, your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this quantum state!</p>
                 </div>
-
                 <div className="quantum-concept">
                   <h4>🔗 Entanglement</h4>
-                  <p>When in superposition, your car splits across <strong>two parallel universes</strong> (α and β). The cars are entangled - measuring one affects the other!</p>
+                  <p>In superposition, your car splits across <strong>two parallel universes</strong> (α and β). The cars are quantum entangled!</p>
                 </div>
-
                 <div className="quantum-concept">
                   <h4>🎲 Probability</h4>
-                  <p>The <strong>opacity of each car</strong> shows its probability. When a laser approaches, there's a probabilistic chance of collision based on your quantum state.</p>
+                  <p>The <strong>opacity of each car</strong> shows its probability. When a laser approaches, collision is probabilistic based on your quantum state.</p>
                 </div>
-
                 <div className="quantum-concept">
                   <h4>📉 Wave Function Collapse</h4>
-                  <p>When you successfully dodge a laser, the quantum state <strong>collapses</strong> - your car returns to a single classical state in Universe α.</p>
+                  <p>When you dodge a laser, the quantum state <strong>collapses</strong> - your car returns to a single classical state.</p>
                 </div>
-              </div>
-            </div>
-
-            <div className="modal-section">
-              <h3>🧮 The Math Behind It</h3>
-              <div className="quantum-math">
-                <p><strong>State Vector:</strong> |ψ⟩ = α|00⟩ + β|01⟩ + γ|10⟩ + δ|11⟩</p>
-                <p><strong>Hadamard Gate (H):</strong> Creates superposition</p>
-                <p><strong>Pauli-X Gate (A/D, ←/→):</strong> Flips lane position</p>
-                <p><strong>CNOT Gate:</strong> Entangles the two universes</p>
               </div>
             </div>
 
@@ -204,7 +204,7 @@ function App() {
         </div>
       )}
 
-      {/* ===== STATS MODAL ===== */}
+      {/* Stats Modal */}
       {showStatsModal && (
         <div className="modal-overlay" onClick={() => setShowStatsModal(false)}>
           <div className="modal stats-modal" onClick={e => e.stopPropagation()}>
@@ -225,20 +225,21 @@ function App() {
                   </div>
                   <div className="stat-box">
                     <span className="stat-value">{scores.length}</span>
-                    <span className="stat-label">Games Played</span>
+                    <span className="stat-label">Games</span>
                   </div>
                   <div className="stat-box">
-                    <span className="stat-value">{Math.round(scores.reduce((a, b) => a + b.score, 0) / scores.length)}</span>
-                    <span className="stat-label">Average</span>
+                    <span className="stat-value">{scores.filter(s => s.won).length}</span>
+                    <span className="stat-label">Wins</span>
                   </div>
                 </div>
 
                 <h3>Recent Games</h3>
                 <div className="scores-list">
                   {scores.map((s, i) => (
-                    <div key={s.id} className={`score-item ${i === 0 ? 'latest' : ''}`}>
+                    <div key={s.id} className={`score-item ${s.won ? 'won' : ''}`}>
                       <span className="score-rank">#{i + 1}</span>
                       <span className="score-value">{s.score}</span>
+                      <span className="score-status">{s.won ? '🏆' : '💥'}</span>
                       <span className="score-date">{s.date}</span>
                     </div>
                   ))}
@@ -253,7 +254,7 @@ function App() {
         </div>
       )}
 
-      {/* ===== MENU SCREEN ===== */}
+      {/* Menu Screen */}
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
@@ -281,9 +282,7 @@ function App() {
                 <span className="label">Stats</span>
               </div>
               <div className="menu-icon-btn" onClick={handleShare}>
-                <div className="icon icon-share">
-                  {copySuccess ? '✓' : '🔗'}
-                </div>
+                <div className="icon icon-share">{copySuccess ? '✓' : '🔗'}</div>
                 <span className="label">{copySuccess ? 'Copied!' : 'Share'}</span>
               </div>
             </div>
@@ -301,9 +300,9 @@ function App() {
           <p className="credits">DR. XU GROUP | TEXAS A&M PHYSICS</p>
         </div>
       ) : (
-        <>
-          {/* ===== PAUSE OVERLAY ===== */}
-          {isPaused && data?.running && (
+        <div className="game-wrapper">
+          {/* Pause Overlay */}
+          {isPaused && !gameEnded && (
             <div className="pause-overlay">
               <h2>⏸️ PAUSED</h2>
               <p>Press P or Esc to resume</p>
@@ -314,36 +313,73 @@ function App() {
             </div>
           )}
 
-          {/* ===== GAME OVER ===== */}
-          {data && !data.running && (
-            <div className="game-over">
-              <h2>GAME OVER</h2>
-              <p className="game-over-score">FINAL SCORE: {data.score}</p>
-              <div className="game-over-buttons">
-                <button className="restart-btn" onClick={handleRestart}>
-                  🔄 PLAY AGAIN
-                </button>
-                <button className="menu-btn-small" onClick={handleBackToMenu}>
-                  Main Menu
-                </button>
+          {/* Game Over Overlay - Shows game in background */}
+          {gameEnded && (
+            <div className="game-over-overlay">
+              <div className="game-over-content">
+                {gameWon ? (
+                  <>
+                    <h2 className="win-title">🏆 RACE COMPLETE!</h2>
+                    <p className="game-over-score">FINAL SCORE: {data?.score}</p>
+                    <p className="win-message">You survived the quantum gauntlet!</p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="lose-title">💥 QUANTUM COLLAPSE</h2>
+                    <p className="game-over-score">SCORE: {data?.score}</p>
+                    <p className="progress-text">Progress: {Math.round(progress)}%</p>
+                  </>
+                )}
+                <div className="game-over-buttons">
+                  <button className="restart-btn" onClick={handleRestart}>
+                    🔄 TRY AGAIN
+                  </button>
+                  <button className="menu-btn-alt" onClick={handleBackToMenu}>
+                    🏠 MAIN MENU
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-          {/* ===== GAME AREA ===== */}
-          <div className={`game-area ${inSuperposition ? 'split' : 'single'}`}>
-            {/* Pause Button */}
-            <button className="pause-btn" onClick={handlePause}>
-              {isPaused ? '▶' : '⏸'}
-            </button>
+          {/* Game Area - Always visible, dimmed when game over */}
+          <div className={`game-area ${inSuperposition ? 'split' : 'single'} ${gameEnded ? 'dimmed' : ''}`}>
 
-            {inSuperposition && (
+            {/* Progress Bar */}
+            <div className="progress-container">
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                <div className="progress-car" style={{ left: `${progress}%` }}>🏎️</div>
+              </div>
+              <div className="progress-labels">
+                <span>START</span>
+                <span className="time-display">{formatTime(data?.game_time_seconds || 0)} / 1:00</span>
+                <span>FINISH</span>
+              </div>
+            </div>
+
+            {/* Pause Button */}
+            {!gameEnded && (
+              <button className="pause-btn" onClick={handlePause}>
+                {isPaused ? '▶' : '⏸'}
+              </button>
+            )}
+
+            {inSuperposition && !gameEnded && (
               <div className="superposition-active">⚛️ SUPERPOSITION</div>
             )}
 
             {/* Universe A */}
             <div className="pane">
               <div className="universe-label universe-a">UNIVERSE α</div>
+
+              {/* Lane Lines */}
+              <div className="lane-lines">
+                <div className="lane-line left"></div>
+                <div className="lane-line center"></div>
+                <div className="lane-line right"></div>
+              </div>
+
               <div className="divider"></div>
 
               {data?.lasers.filter(l => l.universe === 'A').map((l, i) => (
@@ -390,6 +426,14 @@ function App() {
             {inSuperposition && (
               <div className="pane">
                 <div className="universe-label universe-b">UNIVERSE β</div>
+
+                {/* Lane Lines */}
+                <div className="lane-lines">
+                  <div className="lane-line left"></div>
+                  <div className="lane-line center"></div>
+                  <div className="lane-line right"></div>
+                </div>
+
                 <div className="divider"></div>
 
                 {data?.lasers.filter(l => l.universe === 'B').map((l, i) => (
@@ -435,14 +479,16 @@ function App() {
 
             <div className="score-hud">SCORE: {data?.score || 0}</div>
 
-            <div className="controls-hud">
-              <div className="control-key"><span>H</span> Hadamard</div>
-              <div className="control-key"><span>A/D</span> α</div>
-              <div className="control-key"><span>←/→</span> β</div>
-              <div className="control-key"><span>P</span> Pause</div>
-            </div>
+            {!gameEnded && (
+              <div className="controls-hud">
+                <div className="control-key"><span>H</span> Hadamard</div>
+                <div className="control-key"><span>A/D</span> α</div>
+                <div className="control-key"><span>←/→</span> β</div>
+                <div className="control-key"><span>P</span> Pause</div>
+              </div>
+            )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

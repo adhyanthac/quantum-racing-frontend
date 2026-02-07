@@ -362,19 +362,6 @@ body {
   color: var(--text-gray);
 }
 
-.quantum-math {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 15px;
-  border-radius: 10px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-}
-
-.quantum-math p {
-  margin: 8px 0;
-  color: #68d391;
-}
-
 .modal-btn {
   width: 100%;
   padding: 15px;
@@ -450,7 +437,7 @@ body {
   gap: 15px;
 }
 
-.score-item.latest {
+.score-item.won {
   background: rgba(76, 175, 80, 0.15);
   border: 1px solid rgba(76, 175, 80, 0.3);
 }
@@ -466,6 +453,10 @@ body {
   font-weight: 700;
   color: var(--primary-green);
   flex: 1;
+}
+
+.score-status {
+  font-size: 1.2rem;
 }
 
 .score-date {
@@ -491,6 +482,13 @@ body {
   background: rgba(229, 57, 53, 0.3);
 }
 
+/* ===== GAME WRAPPER ===== */
+.game-wrapper {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+
 /* ===== GAME AREA ===== */
 .game-area {
   display: flex;
@@ -499,8 +497,143 @@ body {
   background: linear-gradient(180deg, #0a0a15 0%, #151525 100%);
   position: relative;
   overflow: hidden;
+  transition: opacity 0.3s, filter 0.3s;
 }
 
+.game-area.dimmed {
+  opacity: 0.4;
+  filter: blur(2px);
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-container {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 600px;
+  z-index: 100;
+}
+
+.progress-bar {
+  position: relative;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: visible;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
+  border-radius: 6px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.progress-car {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  transition: left 0.1s linear;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  color: var(--text-gray);
+  letter-spacing: 1px;
+}
+
+.time-display {
+  color: var(--primary-green);
+  font-weight: 700;
+}
+
+/* ===== LANE LINES ===== */
+.lane-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lane-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 3px;
+}
+
+.lane-line.left {
+  left: 5%;
+  background: repeating-linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.3) 0px,
+      rgba(255, 255, 255, 0.3) 30px,
+      transparent 30px,
+      transparent 60px);
+}
+
+.lane-line.center {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  background: repeating-linear-gradient(to bottom,
+      rgba(255, 255, 0, 0.6) 0px,
+      rgba(255, 255, 0, 0.6) 25px,
+      transparent 25px,
+      transparent 50px);
+  box-shadow: 0 0 8px rgba(255, 255, 0, 0.3);
+}
+
+.lane-line.right {
+  right: 5%;
+  background: repeating-linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.3) 0px,
+      rgba(255, 255, 255, 0.3) 30px,
+      transparent 30px,
+      transparent 60px);
+}
+
+/* Animate lane lines moving */
+.lane-lines {
+  animation: roadMove 0.5s linear infinite;
+}
+
+@keyframes roadMove {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 60px;
+  }
+}
+
+.lane-line {
+  animation: laneMove 0.5s linear infinite;
+}
+
+@keyframes laneMove {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 60px;
+  }
+}
+
+/* ===== PANE ===== */
 .pane {
   flex: 1;
   position: relative;
@@ -513,10 +646,16 @@ body {
   position: absolute;
   left: 50%;
   height: 100%;
-  width: 3px;
-  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.6) 0px, rgba(255, 255, 255, 0.6) 30px, transparent 30px, transparent 60px);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  width: 4px;
+  background: repeating-linear-gradient(to bottom,
+      rgba(255, 255, 0, 0.6) 0px,
+      rgba(255, 255, 0, 0.6) 25px,
+      transparent 25px,
+      transparent 50px);
+  box-shadow: 0 0 8px rgba(255, 255, 0, 0.3);
   transform: translateX(-50%);
+  animation: laneMove 0.5s linear infinite;
+  z-index: 2;
 }
 
 /* ===== REALISTIC CSS CAR ===== */
@@ -536,42 +675,20 @@ body {
   height: 100%;
 }
 
-/* Main car body shape */
 .red-car {
   background: linear-gradient(180deg, #ff6b6b 0%, #e53935 40%, #c62828 100%);
-  clip-path: polygon(15% 0%,
-      85% 0%,
-      100% 15%,
-      100% 85%,
-      90% 100%,
-      10% 100%,
-      0% 85%,
-      0% 15%);
+  clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 90% 100%, 10% 100%, 0% 85%, 0% 15%);
   border-radius: 8px;
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.3),
-    0 0 25px rgba(229, 57, 53, 0.6),
-    0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(229, 57, 53, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .blue-car {
   background: linear-gradient(180deg, #64b5f6 0%, #1e88e5 40%, #1565c0 100%);
-  clip-path: polygon(15% 0%,
-      85% 0%,
-      100% 15%,
-      100% 85%,
-      90% 100%,
-      10% 100%,
-      0% 85%,
-      0% 15%);
+  clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 90% 100%, 10% 100%, 0% 85%, 0% 15%);
   border-radius: 8px;
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.3),
-    0 0 25px rgba(30, 136, 229, 0.6),
-    0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(30, 136, 229, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Car top/roof section */
 .car-top {
   position: absolute;
   top: 25%;
@@ -582,36 +699,27 @@ body {
   border-radius: 5px 5px 0 0;
 }
 
-/* Windshield */
 .car-window {
   position: absolute;
   top: 18%;
   left: 15%;
   width: 70%;
   height: 22%;
-  background: linear-gradient(180deg,
-      rgba(100, 181, 246, 0.7) 0%,
-      rgba(30, 136, 229, 0.5) 50%,
-      rgba(0, 0, 0, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(100, 181, 246, 0.7) 0%, rgba(30, 136, 229, 0.5) 50%, rgba(0, 0, 0, 0.6) 100%);
   border-radius: 4px;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
-/* Hood section */
 .car-hood {
   position: absolute;
   top: 5%;
   left: 20%;
   width: 60%;
   height: 12%;
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0.1),
-      rgba(255, 255, 255, 0.3),
-      rgba(255, 255, 255, 0.1));
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
   border-radius: 3px;
 }
 
-/* Wheels */
 .car-wheel {
   position: absolute;
   width: 14px;
@@ -641,7 +749,6 @@ body {
   right: -5%;
 }
 
-/* Headlights */
 .car-headlight {
   position: absolute;
   top: 3%;
@@ -660,7 +767,6 @@ body {
   right: 18%;
 }
 
-/* Taillights */
 .car-taillight {
   position: absolute;
   bottom: 5%;
@@ -796,6 +902,108 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* ===== GAME OVER OVERLAY ===== */
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.5s ease;
+}
+
+.game-over-content {
+  background: rgba(0, 0, 0, 0.9);
+  padding: 50px 60px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s ease;
+}
+
+.win-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 2.5rem;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.lose-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 2.5rem;
+  color: #ff5252;
+  margin-bottom: 20px;
+}
+
+.game-over-score {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  color: var(--text-white);
+  margin: 15px 0;
+}
+
+.progress-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  color: var(--text-gray);
+  margin-bottom: 10px;
+}
+
+.win-message {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  color: var(--primary-green);
+  margin: 15px 0;
+}
+
+.game-over-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.restart-btn {
+  padding: 18px 50px;
+  font-family: 'Russo One', sans-serif;
+  font-size: 1.3rem;
+  color: white;
+  background: linear-gradient(180deg, #5cb85c 0%, #398439 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  transition: transform 0.2s;
+}
+
+.restart-btn:hover {
+  transform: scale(1.05);
+}
+
+.menu-btn-alt {
+  padding: 15px 40px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  color: var(--text-gray);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menu-btn-alt:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* ===== SCORE HUD ===== */
 .score-hud {
   position: fixed;
@@ -880,77 +1088,6 @@ body {
   border: 1px solid rgba(68, 138, 255, 0.4);
 }
 
-/* ===== GAME OVER ===== */
-.game-over {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.92);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.5s ease;
-}
-
-.game-over h2 {
-  font-family: 'Russo One', sans-serif;
-  font-size: 3rem;
-  color: #ff5252;
-  margin-bottom: 20px;
-}
-
-.game-over-score {
-  color: var(--text-white);
-  font-size: 1.8rem;
-  margin: 20px 0;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.game-over-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
-}
-
-.restart-btn {
-  padding: 18px 50px;
-  font-family: 'Russo One', sans-serif;
-  font-size: 1.3rem;
-  color: white;
-  background: linear-gradient(180deg, #5cb85c 0%, #398439 100%);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-  transition: transform 0.2s;
-}
-
-.restart-btn:hover {
-  transform: scale(1.05);
-}
-
-.menu-btn-small {
-  padding: 12px 30px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.9rem;
-  color: var(--text-gray);
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.menu-btn-small:hover {
-  color: white;
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
 /* ===== SPLIT VIEW ===== */
 .game-area.split {
   gap: 4px;
@@ -1008,5 +1145,19 @@ body {
 
   .stats-summary {
     flex-direction: column;
+  }
+
+  .progress-container {
+    width: 90%;
+    top: 70px;
+  }
+
+  .game-over-content {
+    padding: 30px 40px;
+  }
+
+  .win-title,
+  .lose-title {
+    font-size: 2rem;
   }
 }

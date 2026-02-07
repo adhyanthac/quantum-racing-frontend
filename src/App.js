@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 
-const CLIENT_ID = Math.random().toString(36).substring(7);
 const GAME_URL = 'https://quantum-racing.vercel.app';
+
+// Default settings
+const DEFAULT_SETTINGS = {
+  playerName: 'Quantum Racer',
+  carColor: 'red',
+  gameSpeed: 'normal', // slow, normal, fast
+};
 
 function App() {
   const [gameState, setGameState] = useState('MENU');
@@ -10,18 +16,29 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
   const [showQuantumModal, setShowQuantumModal] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [scores, setScores] = useState([]);
   const [copySuccess, setCopySuccess] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [clientId] = useState(() => Math.random().toString(36).substring(7));
   const wsRef = useRef(null);
+  const gameEndedRef = useRef(false);
 
-  // Load scores from localStorage
+  // Load settings and scores from localStorage
   useEffect(() => {
     const savedScores = localStorage.getItem('quantumRacingScores');
-    if (savedScores) {
-      setScores(JSON.parse(savedScores));
-    }
+    if (savedScores) setScores(JSON.parse(savedScores));
+
+    const savedSettings = localStorage.getItem('quantumRacingSettings');
+    if (savedSettings) setSettings(JSON.parse(savedSettings));
   }, []);
+
+  // Save settings
+  const saveSettings = (newSettings) => {
+    setSettings(newSettings);
+    localStorage.setItem('quantumRacingSettings', JSON.stringify(newSettings));
+  };
 
   // Save score when game ends
   const saveScore = useCallback((score, won) => {
@@ -29,18 +46,31 @@ function App() {
       score,
       date: new Date().toLocaleString(),
       id: Date.now(),
-      won
+      won,
+      playerName: settings.playerName
     };
     const updatedScores = [newScore, ...scores].slice(0, 10);
     setScores(updatedScores);
     localStorage.setItem('quantumRacingScores', JSON.stringify(updatedScores));
-  }, [scores]);
+  }, [scores, settings.playerName]);
 
   useEffect(() => {
     if (gameState === 'PLAYING') {
       setGameEnded(false);
-      const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${CLIENT_ID}`);
+      gameEndedRef.current = false;
+
+      // Add speed parameter to WebSocket URL
+      const speedParam = settings.gameSpeed;
+      const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}?speed=${speedParam}`);
       wsRef.current = ws;
+
+      ws.onopen = () => {
+        // Send settings to backend
+        ws.send(JSON.stringify({
+          action: 'set_speed',
+          speed: settings.gameSpeed
+        }));
+      };
 
       ws.onmessage = (e) => {
         const msg = JSON.parse(e.data);
@@ -48,8 +78,9 @@ function App() {
         setData(gameData);
         setIsPaused(gameData.paused || false);
 
-        // Mark game as ended but don't auto-restart
-        if ((msg.type === 'game_over' || msg.type === 'game_won') && !gameEnded) {
+        // Game ended - DON'T auto restart
+        if ((msg.type === 'game_over' || msg.type === 'game_won') && !gameEndedRef.current) {
+          gameEndedRef.current = true;
           setGameEnded(true);
           if (gameData.score > 0) {
             saveScore(gameData.score, msg.type === 'game_won');
@@ -60,11 +91,14 @@ function App() {
       ws.onerror = (err) => console.error('WebSocket error:', err);
       return () => ws.close();
     }
-  }, [gameState, gameEnded, saveScore]);
+  }, [gameState, clientId, settings.gameSpeed, saveScore]);
 
   useEffect(() => {
     const handleKey = (e) => {
-      if (!wsRef.current || gameState !== 'PLAYING' || gameEnded) return;
+      if (!wsRef.current || gameState !== 'PLAYING') return;
+
+      // Don't process any keys if game has ended
+      if (gameEnded || gameEndedRef.current) return;
 
       if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
         wsRef.current.send(JSON.stringify({ action: 'pause' }));
@@ -105,12 +139,17 @@ function App() {
   };
 
   const handleRestart = () => {
+    // Close current connection and start fresh
     if (wsRef.current) {
-      wsRef.current.send(JSON.stringify({ action: 'restart' }));
-      setData(null);
-      setIsPaused(false);
-      setGameEnded(false);
+      wsRef.current.close();
     }
+    setData(null);
+    setIsPaused(false);
+    setGameEnded(false);
+    gameEndedRef.current = false;
+    // Trigger reconnect by toggling state
+    setGameState('MENU');
+    setTimeout(() => setGameState('PLAYING'), 100);
   };
 
   const handleBackToMenu = () => {
@@ -120,6 +159,7 @@ function App() {
     setData(null);
     setIsPaused(false);
     setGameEnded(false);
+    gameEndedRef.current = false;
     setGameState('MENU');
   };
 
@@ -151,11 +191,88 @@ function App() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Get car color class based on settings
+  const getCarColorClass = () => {
+    return `${settings.carColor}-car`;
+  };
+
   return (
     <div className="App">
       <div className="scanlines"></div>
 
-      {/* Quantum Modal */}
+      {/* ===== SETTINGS MODAL ===== */}
+      {showSettingsModal && (
+        <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
+          <div className="modal settings-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowSettingsModal(false)}>✕</button>
+            <h2>⚙️ Settings</h2>
+
+            <div className="settings-section">
+              <h3>👤 Player Name</h3>
+              <input
+                type="text"
+                className="settings-input"
+                value={settings.playerName}
+                onChange={(e) => saveSettings({ ...settings, playerName: e.target.value })}
+                placeholder="Enter your name"
+                maxLength={20}
+              />
+            </div>
+
+            <div className="settings-section">
+              <h3>🎨 Car Color (Universe α)</h3>
+              <div className="color-options">
+                {['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple', 'pink'].map(color => (
+                  <button
+                    key={color}
+                    className={`color-btn ${color} ${settings.carColor === color ? 'selected' : ''}`}
+                    onClick={() => saveSettings({ ...settings, carColor: color })}
+                    title={color.charAt(0).toUpperCase() + color.slice(1)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3>⚡ Game Speed</h3>
+              <div className="speed-options">
+                <button
+                  className={`speed-btn ${settings.gameSpeed === 'slow' ? 'selected' : ''}`}
+                  onClick={() => saveSettings({ ...settings, gameSpeed: 'slow' })}
+                >
+                  🐢 Slow
+                </button>
+                <button
+                  className={`speed-btn ${settings.gameSpeed === 'normal' ? 'selected' : ''}`}
+                  onClick={() => saveSettings({ ...settings, gameSpeed: 'normal' })}
+                >
+                  🚗 Normal
+                </button>
+                <button
+                  className={`speed-btn ${settings.gameSpeed === 'fast' ? 'selected' : ''}`}
+                  onClick={() => saveSettings({ ...settings, gameSpeed: 'fast' })}
+                >
+                  🏎️ Fast
+                </button>
+              </div>
+              <p className="speed-description">
+                {settings.gameSpeed === 'slow' && 'Relaxed pace - great for learning quantum mechanics!'}
+                {settings.gameSpeed === 'normal' && 'Balanced challenge - the standard experience.'}
+                {settings.gameSpeed === 'fast' && 'Intense action - for quantum racing experts!'}
+              </p>
+            </div>
+
+            <div className="settings-section">
+              <h3>🔊 Sound</h3>
+              <p className="coming-soon-text">Coming soon!</p>
+            </div>
+
+            <button className="modal-btn" onClick={() => setShowSettingsModal(false)}>Save & Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* ===== QUANTUM MODAL ===== */}
       {showQuantumModal && (
         <div className="modal-overlay" onClick={() => setShowQuantumModal(false)}>
           <div className="modal quantum-modal" onClick={e => e.stopPropagation()}>
@@ -164,17 +281,29 @@ function App() {
 
             <div className="modal-section">
               <h3>🎮 How to Play</h3>
-              <ul>
-                <li><strong>H Key</strong> - Enter Superposition (split into 2 universes)</li>
-                <li><strong>A/D Keys</strong> - Switch lanes in Universe α (red car)</li>
-                <li><strong>←/→ Arrows</strong> - Switch lanes in Universe β (blue car)</li>
-                <li><strong>P or Esc</strong> - Pause the game</li>
-              </ul>
+              <div className="controls-list">
+                <div className="control-item">
+                  <span className="key-badge">H</span>
+                  <span className="control-desc">Enter Superposition (split into 2 universes)</span>
+                </div>
+                <div className="control-item">
+                  <span className="key-badge">A / D</span>
+                  <span className="control-desc">Switch lanes in Universe α</span>
+                </div>
+                <div className="control-item">
+                  <span className="key-badge">← / →</span>
+                  <span className="control-desc">Switch lanes in Universe β</span>
+                </div>
+                <div className="control-item">
+                  <span className="key-badge">P / Esc</span>
+                  <span className="control-desc">Pause the game</span>
+                </div>
+              </div>
             </div>
 
             <div className="modal-section">
               <h3>🎯 Objective</h3>
-              <p>Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics. The progress bar shows how far you've come.</p>
+              <p className="readable-text">Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics. The progress bar shows how far you've come.</p>
             </div>
 
             <div className="modal-section">
@@ -182,19 +311,19 @@ function App() {
               <div className="quantum-explanation">
                 <div className="quantum-concept">
                   <h4>🌀 Superposition</h4>
-                  <p>Just like Schrödinger's cat, your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this quantum state!</p>
+                  <p className="readable-text">Just like Schrödinger's cat, your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this quantum state!</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>🔗 Entanglement</h4>
-                  <p>In superposition, your car splits across <strong>two parallel universes</strong> (α and β). The cars are quantum entangled!</p>
+                  <p className="readable-text">In superposition, your car splits across <strong>two parallel universes</strong> (α and β). The cars are quantum entangled - what happens to one affects the other!</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>🎲 Probability</h4>
-                  <p>The <strong>opacity of each car</strong> shows its probability. When a laser approaches, collision is probabilistic based on your quantum state.</p>
+                  <p className="readable-text">The <strong>opacity of each car</strong> shows its probability of being there. When a laser approaches, collision is determined probabilistically based on your quantum state.</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>📉 Wave Function Collapse</h4>
-                  <p>When you dodge a laser, the quantum state <strong>collapses</strong> - your car returns to a single classical state.</p>
+                  <p className="readable-text">When you dodge a laser, the quantum state <strong>collapses</strong> - your car returns to a single definite classical state in Universe α.</p>
                 </div>
               </div>
             </div>
@@ -204,7 +333,7 @@ function App() {
         </div>
       )}
 
-      {/* Stats Modal */}
+      {/* ===== STATS MODAL ===== */}
       {showStatsModal && (
         <div className="modal-overlay" onClick={() => setShowStatsModal(false)}>
           <div className="modal stats-modal" onClick={e => e.stopPropagation()}>
@@ -213,8 +342,8 @@ function App() {
 
             {scores.length === 0 ? (
               <div className="no-scores">
-                <p>No games played yet!</p>
-                <p>Start playing to see your scores here.</p>
+                <p className="readable-text">No games played yet!</p>
+                <p className="readable-text">Start playing to see your scores here.</p>
               </div>
             ) : (
               <>
@@ -238,6 +367,7 @@ function App() {
                   {scores.map((s, i) => (
                     <div key={s.id} className={`score-item ${s.won ? 'won' : ''}`}>
                       <span className="score-rank">#{i + 1}</span>
+                      <span className="score-player">{s.playerName || 'Unknown'}</span>
                       <span className="score-value">{s.score}</span>
                       <span className="score-status">{s.won ? '🏆' : '💥'}</span>
                       <span className="score-date">{s.date}</span>
@@ -254,22 +384,25 @@ function App() {
         </div>
       )}
 
-      {/* Menu Screen */}
+      {/* ===== MENU SCREEN ===== */}
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
+            {/* F1 Night Race Background */}
             <img
               src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&q=80"
               alt="Racing Background"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
+            <div className="menu-bg-overlay"></div>
           </div>
 
           <h1 className="title">Q-RACING PRO</h1>
+          <p className="subtitle">QUANTUM PHYSICS RACING</p>
 
           <div className="bottom-menu">
             <div className="menu-icons">
-              <div className="menu-icon-btn" onClick={() => alert('Settings coming soon!')}>
+              <div className="menu-icon-btn" onClick={() => setShowSettingsModal(true)}>
                 <div className="icon icon-settings">⚙️</div>
                 <span className="label">Setting</span>
               </div>
@@ -298,6 +431,9 @@ function App() {
           </div>
 
           <p className="credits">DR. XU GROUP | TEXAS A&M PHYSICS</p>
+          {settings.playerName !== DEFAULT_SETTINGS.playerName && (
+            <p className="player-greeting">Welcome, {settings.playerName}!</p>
+          )}
         </div>
       ) : (
         <div className="game-wrapper">
@@ -313,19 +449,21 @@ function App() {
             </div>
           )}
 
-          {/* Game Over Overlay - Shows game in background */}
+          {/* Game Over Overlay - Shows game (crash) in background */}
           {gameEnded && (
             <div className="game-over-overlay">
               <div className="game-over-content">
                 {gameWon ? (
                   <>
                     <h2 className="win-title">🏆 RACE COMPLETE!</h2>
+                    <p className="game-over-player">{settings.playerName}</p>
                     <p className="game-over-score">FINAL SCORE: {data?.score}</p>
                     <p className="win-message">You survived the quantum gauntlet!</p>
                   </>
                 ) : (
                   <>
-                    <h2 className="lose-title">💥 QUANTUM COLLAPSE</h2>
+                    <h2 className="lose-title">💥 GAME OVER</h2>
+                    <p className="game-over-player">{settings.playerName}</p>
                     <p className="game-over-score">SCORE: {data?.score}</p>
                     <p className="progress-text">Progress: {Math.round(progress)}%</p>
                   </>
@@ -342,8 +480,8 @@ function App() {
             </div>
           )}
 
-          {/* Game Area - Always visible, dimmed when game over */}
-          <div className={`game-area ${inSuperposition ? 'split' : 'single'} ${gameEnded ? 'dimmed' : ''}`}>
+          {/* Game Area - Visible in background when game over */}
+          <div className={`game-area ${inSuperposition ? 'split' : 'single'} ${gameEnded ? 'crashed' : ''}`}>
 
             {/* Progress Bar */}
             <div className="progress-container">
@@ -354,7 +492,7 @@ function App() {
               <div className="progress-labels">
                 <span>START</span>
                 <span className="time-display">{formatTime(data?.game_time_seconds || 0)} / 1:00</span>
-                <span>FINISH</span>
+                <span>FINISH 🏁</span>
               </div>
             </div>
 
@@ -373,7 +511,6 @@ function App() {
             <div className="pane">
               <div className="universe-label universe-a">UNIVERSE α</div>
 
-              {/* Lane Lines */}
               <div className="lane-lines">
                 <div className="lane-line left"></div>
                 <div className="lane-line center"></div>
@@ -391,7 +528,7 @@ function App() {
               ))}
 
               <div className="car-container" style={{ left: '25%', opacity: probs.a[0] }}>
-                <div className="car-body red-car">
+                <div className={`car-body ${getCarColorClass()}`}>
                   <div className="car-top"></div>
                   <div className="car-window"></div>
                   <div className="car-hood"></div>
@@ -406,7 +543,7 @@ function App() {
                 </div>
               </div>
               <div className="car-container" style={{ left: '75%', opacity: probs.a[1] }}>
-                <div className="car-body red-car">
+                <div className={`car-body ${getCarColorClass()}`}>
                   <div className="car-top"></div>
                   <div className="car-window"></div>
                   <div className="car-hood"></div>
@@ -427,7 +564,6 @@ function App() {
               <div className="pane">
                 <div className="universe-label universe-b">UNIVERSE β</div>
 
-                {/* Lane Lines */}
                 <div className="lane-lines">
                   <div className="lane-line left"></div>
                   <div className="lane-line center"></div>

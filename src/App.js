@@ -455,10 +455,10 @@ function App() {
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
-            {/* Sports Car on Road at Night */}
+            {/* F1 Night Race - Las Vegas GP */}
             <img
-              src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=80"
-              alt="Racing Car"
+              src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
+              alt="F1 Night Race"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>

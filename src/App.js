@@ -159,6 +159,15 @@ function App() {
   const probs = getProbs();
   const inSuperposition = data?.quantum_vehicle?.in_superposition;
 
+  // In superposition, make cars more transparent to emphasize quantum state
+  // Maximum opacity is 0.55 in superposition to look more ghostly
+  const getCarOpacity = (prob) => {
+    if (inSuperposition) {
+      return Math.min(0.55, prob * 0.6);
+    }
+    return prob;
+  };
+
   const handlePause = () => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEnded) {
       wsRef.current.send(JSON.stringify({ action: 'pause' }));
@@ -422,9 +431,10 @@ function App() {
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
+            {/* Night F1 Racing Scene */}
             <img
-              src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&q=80"
-              alt="Racing Background"
+              src="https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=1920&q=80"
+              alt="F1 Night Racing"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>
@@ -556,7 +566,7 @@ function App() {
                 />
               ))}
 
-              <div className="car-container" style={{ left: '25%', opacity: probs.a[0] }}>
+              <div className="car-container" style={{ left: '25%', opacity: getCarOpacity(probs.a[0]) }}>
                 <div className={`car-body ${getCarColorClass()}`}>
                   <div className="car-top"></div>
                   <div className="car-window"></div>
@@ -571,7 +581,7 @@ function App() {
                   <div className="car-taillight right"></div>
                 </div>
               </div>
-              <div className="car-container" style={{ left: '75%', opacity: probs.a[1] }}>
+              <div className="car-container" style={{ left: '75%', opacity: getCarOpacity(probs.a[1]) }}>
                 <div className={`car-body ${getCarColorClass()}`}>
                   <div className="car-top"></div>
                   <div className="car-window"></div>
@@ -609,7 +619,7 @@ function App() {
                   />
                 ))}
 
-                <div className="car-container" style={{ left: '25%', opacity: probs.b[0] }}>
+                <div className="car-container" style={{ left: '25%', opacity: getCarOpacity(probs.b[0]) }}>
                   <div className="car-body blue-car">
                     <div className="car-top"></div>
                     <div className="car-window"></div>
@@ -624,7 +634,7 @@ function App() {
                     <div className="car-taillight right"></div>
                   </div>
                 </div>
-                <div className="car-container" style={{ left: '75%', opacity: probs.b[1] }}>
+                <div className="car-container" style={{ left: '75%', opacity: getCarOpacity(probs.b[1]) }}>
                   <div className="car-body blue-car">
                     <div className="car-top"></div>
                     <div className="car-window"></div>

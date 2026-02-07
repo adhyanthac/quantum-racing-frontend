@@ -1,66 +1,19 @@
-/* Y2K Racer Theme */
-body {
-  background-color: #050505;
-  color: #00f2ff;
-  font-family: 'Courier New', Courier, monospace;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #00f2ff; font-family: 'Courier New', monospace; overflow: hidden; }
 
-/* Red Car Top-Down Sprite */
-.car-sprite {
-  position: absolute;
-  width: 35px;
-  height: 60px;
-  background: #ff0000;
-  border-radius: 4px;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), inset 0 0 10px black;
-}
+.menu-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(#111, #000); }
+.title { font-size: 5rem; text-shadow: 3px 3px #f00; margin-bottom: 2rem; }
+.start-btn { padding: 1rem 2rem; background: none; border: 2px solid #00f2ff; color: #00f2ff; font-size: 1.5rem; cursor: pointer; box-shadow: 0 0 10px #00f2ff; }
+.start-btn:hover { background: #00f2ff; color: #000; }
 
-/* Car Windows/Details */
-.car-sprite::after {
-  content: '';
-  position: absolute;
-  top: 10px; left: 5px; width: 25px; height: 15px;
-  background: #222; /* Windshield */
-  border-radius: 2px;
-}
+.game-area { display: flex; height: 100vh; width: 100vw; }
+.pane { flex: 1; position: relative; border: 1px solid #222; background: #050505; }
+.divider { position: absolute; left: 50%; height: 100%; width: 2px; background: repeating-linear-gradient(to bottom, #333 0, #333 20px, transparent 20px, transparent 40px); }
 
-/* Lane Dividers */
-.lane-divider {
-  position: absolute;
-  left: 50%;
-  top: 0; bottom: 0;
-  width: 4px;
-  background: repeating-linear-gradient(
-    to bottom,
-    #00f2ff 0%, #00f2ff 50%,
-    transparent 50%, transparent 100%
-  );
-  background-size: 100% 40px;
-  opacity: 0.3;
-}
+.car { position: absolute; bottom: 15%; width: 40px; height: 70px; border-radius: 4px; transform: translateX(-50%); transition: opacity 0.1s; }
+.red { background: #f00; box-shadow: 0 0 15px #f00; }
+.blue { background: #00f; box-shadow: 0 0 15px #00f; }
+.car::after { content: ''; position: absolute; top: 10px; left: 5px; width: 30px; height: 15px; background: #222; } /* Windshield */
 
-/* Measurement Laser */
-.laser-beam {
-  position: absolute;
-  height: 6px;
-  width: 50%;
-  background: #fff;
-  box-shadow: 0 0 15px #00f2ff, 0 0 30px #00f2ff;
-  animation: flicker 0.1s infinite;
-}
-
-@keyframes flicker {
-  0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; }
-}
-
-/* Menu Page */
-.menu-screen {
-  background: linear-gradient(45deg, #000 0%, #111 100%);
-  border: 10px double #00f2ff;
-  margin: 20px;
-  height: calc(100vh - 40px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+.laser { position: absolute; height: 5px; width: 50%; background: #fff; box-shadow: 0 0 15px #00f2ff; }
+.score-hud { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; }

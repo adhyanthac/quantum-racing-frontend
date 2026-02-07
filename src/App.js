@@ -30,12 +30,10 @@ function App() {
   const scoreSavedRef = useRef(false);
   const settingsRef = useRef(settings);
 
-  // Keep settingsRef in sync
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
 
-  // Load settings and scores from localStorage
   useEffect(() => {
     const savedScores = localStorage.getItem('quantumRacingScores');
     if (savedScores) setScores(JSON.parse(savedScores));
@@ -48,14 +46,12 @@ function App() {
     }
   }, []);
 
-  // Save settings
   const saveSettings = (newSettings) => {
     setSettings(newSettings);
     settingsRef.current = newSettings;
     localStorage.setItem('quantumRacingSettings', JSON.stringify(newSettings));
   };
 
-  // Save score using ref to avoid dependency issues
   const saveScoreToStorage = useCallback((score, won, playerName) => {
     const newScore = {
       score,
@@ -75,7 +71,6 @@ function App() {
   useEffect(() => {
     if (gameState !== 'PLAYING') return;
 
-    // Reset state
     gameEndedRef.current = false;
     scoreSavedRef.current = false;
     setGameEnded(false);
@@ -84,7 +79,12 @@ function App() {
     setFinalProgress(0);
     setData(null);
 
-    const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}`);
+    // Use local for development, remote for production
+    const wsUrl = window.location.hostname === 'localhost'
+      ? `ws://localhost:8000/ws/${clientId}`
+      : `wss://quantum-racing-backend.onrender.com/ws/${clientId}`;
+
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -119,7 +119,6 @@ function App() {
           saveScoreToStorage(gameData.score, msg.type === 'game_won', settingsRef.current.playerName);
         }
 
-        console.log('Game ended, closing WebSocket');
         ws.close();
       }
     };
@@ -143,21 +142,18 @@ function App() {
 
       const key = e.key.toLowerCase();
 
-      // H = Enter superposition
+      // H = Enter superposition (Hadamard + CNOT)
       if (key === 'h') {
-        wsRef.current.send(JSON.stringify({ action: 'superposition' }));
+        wsRef.current.send(JSON.stringify({ action: 'hadamard' }));
       }
-      // A = Collapse to lane 0 (left)
-      else if (key === 'a') {
-        wsRef.current.send(JSON.stringify({ action: 'collapse_left' }));
+      // A or D = Switch lane in Universe A (Pauli-X on qubit A)
+      else if (key === 'a' || key === 'd') {
+        wsRef.current.send(JSON.stringify({ action: 'pauli_x_A' }));
       }
-      // D = Collapse to lane 1 (right)
-      else if (key === 'd') {
-        wsRef.current.send(JSON.stringify({ action: 'collapse_right' }));
-      }
-      // Arrow keys = Switch lane (classical mode)
+      // Arrow keys = Switch lane in Universe B (Pauli-X on qubit B)
       else if (key === 'arrowleft' || key === 'arrowright') {
-        wsRef.current.send(JSON.stringify({ action: 'switch' }));
+        e.preventDefault();
+        wsRef.current.send(JSON.stringify({ action: 'pauli_x_B' }));
       }
       // Pause
       else if (key === 'p' || key === 'escape') {
@@ -180,14 +176,14 @@ function App() {
       wsRef.current.close();
       wsRef.current = null;
     }
+    gameEndedRef.current = false;
+    scoreSavedRef.current = false;
     setData(null);
     setIsPaused(false);
     setGameEnded(false);
     setGameWon(false);
     setFinalScore(0);
     setFinalProgress(0);
-    gameEndedRef.current = false;
-    scoreSavedRef.current = false;
     setGameState('MENU');
     setTimeout(() => setGameState('PLAYING'), 50);
   };
@@ -197,12 +193,12 @@ function App() {
       wsRef.current.close();
       wsRef.current = null;
     }
+    gameEndedRef.current = false;
+    scoreSavedRef.current = false;
     setData(null);
     setIsPaused(false);
     setGameEnded(false);
     setGameWon(false);
-    gameEndedRef.current = false;
-    scoreSavedRef.current = false;
     setGameState('MENU');
   };
 
@@ -228,8 +224,9 @@ function App() {
   };
 
   // Game data
-  const currentLane = data?.lane ?? 0;
   const inSuperposition = data?.in_superposition ?? false;
+  const carA = data?.car_A ?? { lane: 0, left_prob: 1, right_prob: 0 };
+  const carB = data?.car_B ?? { lane: 0, left_prob: 1, right_prob: 0 };
   const lasers = data?.lasers ?? [];
   const progress = data?.progress ?? 0;
 
@@ -240,66 +237,59 @@ function App() {
         <div className="modal-overlay" onClick={() => setShowQuantumModal(false)}>
           <div className="modal quantum-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowQuantumModal(false)}>✕</button>
-            <h2>⚛️ Quantum Racing Guide</h2>
+            <h2>⚛️ Quantum Guide</h2>
 
             <div className="modal-section">
               <h3>🎮 Controls</h3>
               <div className="controls-list">
                 <div className="control-item">
                   <span className="key-badge">H</span>
-                  <span className="control-desc">Enter Superposition (be in BOTH lanes!)</span>
+                  <span className="control-desc">Enter Superposition (creates entangled Universe B)</span>
                 </div>
                 <div className="control-item">
-                  <span className="key-badge">A</span>
-                  <span className="control-desc">Collapse to LEFT lane</span>
-                </div>
-                <div className="control-item">
-                  <span className="key-badge">D</span>
-                  <span className="control-desc">Collapse to RIGHT lane</span>
+                  <span className="key-badge">A / D</span>
+                  <span className="control-desc">Switch lane in Universe α (Pauli-X gate)</span>
                 </div>
                 <div className="control-item">
                   <span className="key-badge">← / →</span>
-                  <span className="control-desc">Switch lanes (when classical)</span>
-                </div>
-                <div className="control-item">
-                  <span className="key-badge">P / Esc</span>
-                  <span className="control-desc">Pause the game</span>
+                  <span className="control-desc">Switch lane in Universe β (Pauli-X gate)</span>
                 </div>
               </div>
             </div>
 
             <div className="modal-section">
-              <h3>🎯 How to Win</h3>
-              <p className="readable-text">
-                <strong>Survive 60 seconds!</strong> Dodge incoming lasers by switching lanes or using quantum superposition strategically.
-              </p>
-            </div>
-
-            <div className="modal-section">
-              <h3>⚛️ The Real Physics</h3>
+              <h3>⚛️ Quantum Mechanics</h3>
               <div className="quantum-explanation">
                 <div className="quantum-concept">
-                  <h4>🌀 Superposition</h4>
+                  <h4>🌀 Superposition (H Gate)</h4>
                   <p className="readable-text">
-                    Press <strong>H</strong> to enter superposition. Your car exists in <strong>BOTH lanes</strong> simultaneously with 50% probability each.
-                    This is real quantum mechanics - particles can be in multiple states at once!
+                    Press <strong>H</strong> to apply a Hadamard gate + CNOT, creating an <strong>entangled Bell state</strong>.
+                    Your car now exists in BOTH universes simultaneously!
                   </p>
                 </div>
                 <div className="quantum-concept">
-                  <h4>📉 Measurement (Collapse)</h4>
+                  <h4>🔗 Entanglement (CNOT)</h4>
                   <p className="readable-text">
-                    Press <strong>A or D</strong> to "measure" your position and collapse to that lane.
-                    <strong>WARNING:</strong> If a laser reaches you while in superposition, you collapse randomly (50/50 chance)!
+                    The two cars are <strong>quantum entangled</strong>. Their fates are correlated -
+                    what happens to one affects the probability of the other!
                   </p>
                 </div>
                 <div className="quantum-concept">
-                  <h4>🧠 Strategy</h4>
+                  <h4>📉 Measurement (Born Rule)</h4>
                   <p className="readable-text">
-                    Enter superposition when you see a laser, then <strong>collapse to the safe lane</strong> before it hits.
-                    This teaches: quantum states are uncertain until measured!
+                    When a laser reaches your car, it's a <strong>quantum measurement</strong>.
+                    The probability of passing or crashing follows the <strong>Born rule</strong>!
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="modal-section">
+              <h3>🎯 Strategy</h3>
+              <p className="readable-text">
+                You <strong>MUST</strong> use superposition to survive! In classical mode, lasers are unavoidable.
+                In superposition, manipulate both universes to maximize your survival probability!
+              </p>
             </div>
 
             <button className="modal-btn" onClick={() => setShowQuantumModal(false)}>Got it!</button>
@@ -315,28 +305,31 @@ function App() {
             <h2>⚙️ Settings</h2>
             <div className="settings-content">
               <div className="setting-item">
-                <label>Player Name</label>
+                <label className="setting-label">Player Name</label>
                 <input
                   type="text"
+                  className="setting-input"
                   value={settings.playerName}
                   onChange={(e) => saveSettings({ ...settings, playerName: e.target.value })}
                   maxLength={20}
+                  placeholder="Enter your name"
                 />
               </div>
               <div className="setting-item">
-                <label>Car Color</label>
+                <label className="setting-label">Car Color</label>
                 <div className="color-options">
                   {['red', 'blue', 'green', 'yellow', 'purple'].map(color => (
                     <button
                       key={color}
                       className={`color-btn ${color} ${settings.carColor === color ? 'selected' : ''}`}
                       onClick={() => saveSettings({ ...settings, carColor: color })}
+                      title={color}
                     />
                   ))}
                 </div>
               </div>
               <div className="setting-item">
-                <label>Game Speed</label>
+                <label className="setting-label">Game Speed</label>
                 <div className="speed-options">
                   {['slow', 'normal', 'fast'].map(speed => (
                     <button
@@ -385,25 +378,24 @@ function App() {
         <div className="menu-screen">
           <div className="menu-bg">
             <img
-              src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
-              alt="F1 Night Race"
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80"
+              alt="Road Background"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>
           </div>
 
-          <h1 className="title">Q-RACING PRO</h1>
-          <p className="subtitle">QUANTUM PHYSICS RACING</p>
+          <h1 className="title">QUANTUM RACING</h1>
 
           <div className="bottom-menu">
             <div className="menu-icons">
               <div className="menu-icon-btn" onClick={() => setShowSettingsModal(true)}>
                 <div className="icon icon-settings">⚙️</div>
-                <span className="label">Setting</span>
+                <span className="label">Settings</span>
               </div>
               <div className="menu-icon-btn" onClick={() => setShowQuantumModal(true)}>
                 <div className="icon icon-quantum">⚛️</div>
-                <span className="label">Quantum</span>
+                <span className="label">Guide</span>
               </div>
               <div className="menu-icon-btn" onClick={() => setShowStatsModal(true)}>
                 <div className="icon icon-more">📊</div>
@@ -439,10 +431,14 @@ function App() {
                     <span className="stat-label">Progress</span>
                     <span className="stat-value">{Math.round(finalProgress)}%</span>
                   </div>
+                  <div className="stat-item">
+                    <span className="stat-label">H Gate Uses</span>
+                    <span className="stat-value">{data?.hadamard_uses || 0}</span>
+                  </div>
                 </div>
                 <div className="game-over-btns">
                   <button className="restart-btn" onClick={handleRestart}>🔄 TRY AGAIN</button>
-                  <button className="menu-btn" onClick={handleBackToMenu}>🏠 MAIN MENU</button>
+                  <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
                 </div>
               </div>
             </div>
@@ -454,7 +450,7 @@ function App() {
               <div className="pause-content">
                 <h2>⏸️ PAUSED</h2>
                 <button className="resume-btn" onClick={handlePause}>▶️ RESUME</button>
-                <button className="menu-btn" onClick={handleBackToMenu}>🏠 MAIN MENU</button>
+                <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
               </div>
             </div>
           )}
@@ -477,67 +473,45 @@ function App() {
           {/* Superposition Indicator */}
           {inSuperposition && !gameEnded && (
             <div className="superposition-active">
-              ⚛️ SUPERPOSITION - Choose A or D!
+              ⚛️ ENTANGLED STATE
             </div>
           )}
 
-          {/* Game Track */}
-          <div className="track">
-            <div className="lane-divider"></div>
+          {/* Game Area - Two Universes */}
+          <div className={`game-area ${inSuperposition ? 'split' : ''}`}>
+            {/* Universe A */}
+            <div className="pane">
+              <div className="universe-label universe-a">UNIVERSE α</div>
+              <div className="controls-hint">A / D</div>
 
-            {/* Lasers */}
-            {lasers.map((laser) => (
+              <div className="lane-lines">
+                <div className="lane-line left"></div>
+                <div className="lane-line center"></div>
+                <div className="lane-line right"></div>
+              </div>
+
+              <div className="divider"></div>
+
+              {/* Universe A Lasers */}
+              {lasers.filter(l => l.universe === 'A').map((laser) => (
+                <div
+                  key={laser.id}
+                  className="laser"
+                  style={{
+                    top: `${laser.y}%`,
+                    left: laser.lane === 0 ? '5%' : '55%',
+                    width: '40%'
+                  }}
+                />
+              ))}
+
+              {/* Universe A Car */}
               <div
-                key={laser.id}
-                className="laser"
+                className={`car-container ${inSuperposition ? 'superposition-car' : ''}`}
                 style={{
-                  top: `${laser.y}%`,
-                  left: laser.lane === 0 ? '10%' : '60%',
-                  width: '30%'
+                  left: carA.lane === 0 ? '25%' : '75%',
+                  opacity: inSuperposition ? 0.6 : 1
                 }}
-              />
-            ))}
-
-            {/* Car(s) */}
-            {inSuperposition ? (
-              /* Superposition: Show ghost cars in BOTH lanes */
-              <>
-                <div
-                  className="car-container superposition-car"
-                  style={{ left: '25%', opacity: 0.5 }}
-                >
-                  <div className={`car-body ${getCarColorClass()}`}>
-                    <div className="car-top"></div>
-                    <div className="car-window"></div>
-                    <div className="car-hood"></div>
-                    <div className="car-wheel wheel-fl"></div>
-                    <div className="car-wheel wheel-fr"></div>
-                    <div className="car-wheel wheel-bl"></div>
-                    <div className="car-wheel wheel-br"></div>
-                  </div>
-                  <div className="lane-label">A - LEFT</div>
-                </div>
-                <div
-                  className="car-container superposition-car"
-                  style={{ left: '75%', opacity: 0.5 }}
-                >
-                  <div className={`car-body ${getCarColorClass()}`}>
-                    <div className="car-top"></div>
-                    <div className="car-window"></div>
-                    <div className="car-hood"></div>
-                    <div className="car-wheel wheel-fl"></div>
-                    <div className="car-wheel wheel-fr"></div>
-                    <div className="car-wheel wheel-bl"></div>
-                    <div className="car-wheel wheel-br"></div>
-                  </div>
-                  <div className="lane-label">D - RIGHT</div>
-                </div>
-              </>
-            ) : (
-              /* Classical: One solid car */
-              <div
-                className="car-container"
-                style={{ left: currentLane === 0 ? '25%' : '75%' }}
               >
                 <div className={`car-body ${getCarColorClass()}`}>
                   <div className="car-top"></div>
@@ -547,6 +521,62 @@ function App() {
                   <div className="car-wheel wheel-fr"></div>
                   <div className="car-wheel wheel-bl"></div>
                   <div className="car-wheel wheel-br"></div>
+                </div>
+                {inSuperposition && (
+                  <div className="probability-badge">
+                    {Math.round(carA.lane === 0 ? carA.left_prob * 100 : carA.right_prob * 100)}%
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Universe B (only visible in superposition) */}
+            {inSuperposition && (
+              <div className="pane">
+                <div className="universe-label universe-b">UNIVERSE β</div>
+                <div className="controls-hint">← / →</div>
+
+                <div className="lane-lines">
+                  <div className="lane-line left"></div>
+                  <div className="lane-line center"></div>
+                  <div className="lane-line right"></div>
+                </div>
+
+                <div className="divider"></div>
+
+                {/* Universe B Lasers */}
+                {lasers.filter(l => l.universe === 'B').map((laser) => (
+                  <div
+                    key={laser.id}
+                    className="laser"
+                    style={{
+                      top: `${laser.y}%`,
+                      left: laser.lane === 0 ? '5%' : '55%',
+                      width: '40%'
+                    }}
+                  />
+                ))}
+
+                {/* Universe B Car */}
+                <div
+                  className="car-container superposition-car"
+                  style={{
+                    left: carB.lane === 0 ? '25%' : '75%',
+                    opacity: 0.6
+                  }}
+                >
+                  <div className="car-body blue-car">
+                    <div className="car-top"></div>
+                    <div className="car-window"></div>
+                    <div className="car-hood"></div>
+                    <div className="car-wheel wheel-fl"></div>
+                    <div className="car-wheel wheel-fr"></div>
+                    <div className="car-wheel wheel-bl"></div>
+                    <div className="car-wheel wheel-br"></div>
+                  </div>
+                  <div className="probability-badge">
+                    {Math.round(carB.lane === 0 ? carB.left_prob * 100 : carB.right_prob * 100)}%
+                  </div>
                 </div>
               </div>
             )}
@@ -559,8 +589,8 @@ function App() {
           {!gameEnded && (
             <div className="controls-hud">
               <div className="control-key"><span>H</span> Superposition</div>
-              <div className="control-key"><span>A/D</span> Collapse</div>
-              <div className="control-key"><span>←/→</span> Switch</div>
+              <div className="control-key"><span>A/D</span> Universe α</div>
+              {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
             </div>
           )}
         </div>

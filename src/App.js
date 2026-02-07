@@ -45,50 +45,70 @@ function App() {
 
   return (
     <div className="App">
-      {/* Global Scanlines Effect */}
+      {/* Subtle Scanlines */}
       <div className="scanlines"></div>
 
       {gameState === 'MENU' ? (
         <div className="menu-screen">
-          <h1 className="title">Q-RACING PRO</h1>
-          <button className="start-btn" onClick={() => setGameState('PLAYING')}>
-            ⚡ INITIATE ENTANGLEMENT ⚡
-          </button>
-          <p className="credits">✦ DR. XU GROUP | TEXAS A&M PHYSICS ✦</p>
-
-          {/* Controls Info */}
-          <div className="controls-hud" style={{ marginTop: '40px' }}>
-            <div className="control-key">
-              <span style={{ color: '#ff00ff' }}>H</span> = HADAMARD
-            </div>
-            <div className="control-key">
-              <span style={{ color: '#ff0066' }}>A/D</span> = UNIVERSE A
-            </div>
-            <div className="control-key">
-              <span style={{ color: '#0099ff' }}>←/→</span> = UNIVERSE B
-            </div>
+          {/* Background */}
+          <div className="menu-bg">
+            <img
+              src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&q=80"
+              alt="Racing Background"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
           </div>
+
+          {/* Title */}
+          <h1 className="title">Q-RACING PRO</h1>
+
+          {/* Bottom Menu Bar */}
+          <div className="bottom-menu">
+            {/* Left side icons */}
+            <div className="menu-icons">
+              <div className="menu-icon-btn">
+                <div className="icon icon-settings">⚙️</div>
+                <span className="label">Setting</span>
+              </div>
+              <div className="menu-icon-btn">
+                <div className="icon icon-quantum">⚛️</div>
+                <span className="label">Quantum</span>
+              </div>
+              <div className="menu-icon-btn">
+                <div className="icon icon-more">📊</div>
+                <span className="label">Stats</span>
+              </div>
+              <div className="menu-icon-btn">
+                <div className="icon icon-share">🔗</div>
+                <span className="label">Share</span>
+              </div>
+            </div>
+
+            {/* Start Button */}
+            <button className="start-btn" onClick={() => setGameState('PLAYING')}>
+              <div className="start-btn-main">START</div>
+              <div className="start-btn-stripes">
+                <div className="stripe"></div>
+                <div className="stripe"></div>
+                <div className="stripe"></div>
+              </div>
+            </button>
+          </div>
+
+          {/* Credits */}
+          <p className="credits">DR. XU GROUP | TEXAS A&M PHYSICS</p>
         </div>
       ) : (
         <>
           {/* Game Over Screen */}
           {data && !data.running && (
             <div className="game-over">
-              <h2>⚠️ QUANTUM COLLAPSE ⚠️</h2>
-              <p style={{
-                color: '#00d4ff',
-                fontSize: '2rem',
-                margin: '20px 0',
-                fontFamily: 'Orbitron, sans-serif'
-              }}>
-                FINAL SCORE: {data.score}
-              </p>
-              <button
-                className="start-btn"
-                onClick={handleRestart}
-                style={{ marginTop: '20px' }}
-              >
-                🔄 RESTART SIMULATION
+              <h2>GAME OVER</h2>
+              <p className="game-over-score">FINAL SCORE: {data.score}</p>
+              <button className="restart-btn" onClick={handleRestart}>
+                PLAY AGAIN
               </button>
             </div>
           )}
@@ -98,7 +118,7 @@ function App() {
             {/* Superposition Indicator */}
             {inSuperposition && (
               <div className="superposition-active">
-                ⚛️ SUPERPOSITION ACTIVE
+                ⚛️ SUPERPOSITION
               </div>
             )}
 
@@ -126,7 +146,7 @@ function App() {
                 style={{
                   left: '25%',
                   opacity: probs.a[0],
-                  transform: `translateX(-50%) scale(${0.8 + probs.a[0] * 0.2})`
+                  transform: `translateX(-50%) scale(${0.85 + probs.a[0] * 0.15})`
                 }}
               />
               <div
@@ -134,7 +154,7 @@ function App() {
                 style={{
                   left: '75%',
                   opacity: probs.a[1],
-                  transform: `translateX(-50%) scale(${0.8 + probs.a[1] * 0.2})`
+                  transform: `translateX(-50%) scale(${0.85 + probs.a[1] * 0.15})`
                 }}
               />
             </div>
@@ -164,7 +184,7 @@ function App() {
                   style={{
                     left: '25%',
                     opacity: probs.b[0],
-                    transform: `translateX(-50%) scale(${0.8 + probs.b[0] * 0.2})`
+                    transform: `translateX(-50%) scale(${0.85 + probs.b[0] * 0.15})`
                   }}
                 />
                 <div
@@ -172,7 +192,7 @@ function App() {
                   style={{
                     left: '75%',
                     opacity: probs.b[1],
-                    transform: `translateX(-50%) scale(${0.8 + probs.b[1] * 0.2})`
+                    transform: `translateX(-50%) scale(${0.85 + probs.b[1] * 0.15})`
                   }}
                 />
               </div>
@@ -184,13 +204,13 @@ function App() {
             {/* Controls HUD */}
             <div className="controls-hud">
               <div className="control-key">
-                <span style={{ color: '#ff00ff' }}>H</span> HADAMARD
+                <span>H</span> Hadamard
               </div>
               <div className="control-key">
-                <span style={{ color: '#ff0066' }}>A/D</span> α
+                <span>A/D</span> Universe α
               </div>
               <div className="control-key">
-                <span style={{ color: '#0099ff' }}>←/→</span> β
+                <span>←/→</span> Universe β
               </div>
             </div>
           </div>

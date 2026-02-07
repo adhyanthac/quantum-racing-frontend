@@ -186,52 +186,28 @@ body {
 
 /* ===== START BUTTON ===== */
 .start-btn {
-  display: flex;
-  align-items: center;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  transition: transform 0.2s ease;
-}
-
-.start-btn:hover {
-  transform: scale(1.03);
-}
-
-.start-btn-main {
-  padding: 18px 50px;
+  padding: 18px 60px;
   font-family: 'Russo One', 'Orbitron', sans-serif;
   font-size: 1.8rem;
   font-weight: 900;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--text-white);
   background: linear-gradient(180deg, #5cb85c 0%, #4cae4c 40%, #398439 100%);
   border: none;
-  border-radius: 8px 0 0 8px;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.25);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.start-btn-stripes {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 15px;
-  background: linear-gradient(180deg, #5cb85c 0%, #4cae4c 40%, #398439 100%);
-  border-radius: 0 8px 8px 0;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.25);
+.start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(76, 175, 80, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.25);
 }
 
-.stripe {
-  width: 8px;
-  height: 14px;
-  background: var(--text-white);
-  border-radius: 1px;
-  transform: skewX(-15deg);
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
+/* Removed stripes decoration */
 
 .credits {
   position: absolute;

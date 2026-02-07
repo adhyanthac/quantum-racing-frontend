@@ -7,7 +7,7 @@ const GAME_URL = 'https://quantum-racing.vercel.app';
 const DEFAULT_SETTINGS = {
   playerName: 'Quantum Racer',
   carColor: 'red',
-  gameSpeed: 'normal', // slow, normal, fast
+  gameSpeed: 'normal',
 };
 
 function App() {
@@ -20,10 +20,13 @@ function App() {
   const [scores, setScores] = useState([]);
   const [copySuccess, setCopySuccess] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
+  const [finalProgress, setFinalProgress] = useState(0);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [clientId] = useState(() => Math.random().toString(36).substring(7));
   const wsRef = useRef(null);
-  const gameEndedRef = useRef(false);
+  const scoreSavedRef = useRef(false);
 
   // Load settings and scores from localStorage
   useEffect(() => {
@@ -40,7 +43,7 @@ function App() {
     localStorage.setItem('quantumRacingSettings', JSON.stringify(newSettings));
   };
 
-  // Save score when game ends
+  // Save score
   const saveScore = useCallback((score, won) => {
     const newScore = {
       score,
@@ -49,23 +52,27 @@ function App() {
       won,
       playerName: settings.playerName
     };
-    const updatedScores = [newScore, ...scores].slice(0, 10);
-    setScores(updatedScores);
-    localStorage.setItem('quantumRacingScores', JSON.stringify(updatedScores));
-  }, [scores, settings.playerName]);
+    setScores(prev => {
+      const updatedScores = [newScore, ...prev].slice(0, 10);
+      localStorage.setItem('quantumRacingScores', JSON.stringify(updatedScores));
+      return updatedScores;
+    });
+  }, [settings.playerName]);
 
   useEffect(() => {
     if (gameState === 'PLAYING') {
+      // Reset all game state
       setGameEnded(false);
-      gameEndedRef.current = false;
+      setGameWon(false);
+      setFinalScore(0);
+      setFinalProgress(0);
+      setData(null);
+      scoreSavedRef.current = false;
 
-      // Add speed parameter to WebSocket URL
-      const speedParam = settings.gameSpeed;
-      const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}?speed=${speedParam}`);
+      const ws = new WebSocket(`wss://quantum-racing-backend.onrender.com/ws/${clientId}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        // Send settings to backend
         ws.send(JSON.stringify({
           action: 'set_speed',
           speed: settings.gameSpeed
@@ -75,30 +82,52 @@ function App() {
       ws.onmessage = (e) => {
         const msg = JSON.parse(e.data);
         const gameData = msg.data;
-        setData(gameData);
-        setIsPaused(gameData.paused || false);
 
-        // Game ended - DON'T auto restart
-        if ((msg.type === 'game_over' || msg.type === 'game_won') && !gameEndedRef.current) {
-          gameEndedRef.current = true;
+        // CRITICAL: If game has ended, ignore all further messages
+        if (gameEnded) {
+          return;
+        }
+
+        // Game is still running - update state
+        if (msg.type === 'game_state') {
+          setData(gameData);
+          setIsPaused(gameData.paused || false);
+        }
+
+        // Game just ended - STOP everything
+        if (msg.type === 'game_over' || msg.type === 'game_won') {
+          // Save the final state
+          setFinalScore(gameData.score);
+          setFinalProgress(gameData.progress);
+          setGameWon(msg.type === 'game_won');
           setGameEnded(true);
-          if (gameData.score > 0) {
+          setData(gameData); // Keep last state for crash display
+
+          // Save score once
+          if (!scoreSavedRef.current && gameData.score > 0) {
+            scoreSavedRef.current = true;
             saveScore(gameData.score, msg.type === 'game_won');
           }
+
+          // Close WebSocket - we don't need more messages
+          ws.close();
         }
       };
 
       ws.onerror = (err) => console.error('WebSocket error:', err);
-      return () => ws.close();
+
+      return () => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.close();
+        }
+      };
     }
-  }, [gameState, clientId, settings.gameSpeed, saveScore]);
+  }, [gameState, clientId, settings.gameSpeed, saveScore, gameEnded]);
 
   useEffect(() => {
     const handleKey = (e) => {
-      if (!wsRef.current || gameState !== 'PLAYING') return;
-
-      // Don't process any keys if game has ended
-      if (gameEnded || gameEndedRef.current) return;
+      if (gameState !== 'PLAYING' || gameEnded) return;
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
       if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
         wsRef.current.send(JSON.stringify({ action: 'pause' }));
@@ -129,37 +158,45 @@ function App() {
 
   const probs = getProbs();
   const inSuperposition = data?.quantum_vehicle?.in_superposition;
-  const progress = data?.progress || 0;
-  const gameWon = data?.game_won || false;
 
   const handlePause = () => {
-    if (wsRef.current && !gameEnded) {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEnded) {
       wsRef.current.send(JSON.stringify({ action: 'pause' }));
     }
   };
 
+  // Restart creates a completely new game
   const handleRestart = () => {
-    // Close current connection and start fresh
+    // Close any existing connection
     if (wsRef.current) {
       wsRef.current.close();
+      wsRef.current = null;
     }
+    // Reset all state
     setData(null);
     setIsPaused(false);
     setGameEnded(false);
-    gameEndedRef.current = false;
-    // Trigger reconnect by toggling state
+    setGameWon(false);
+    setFinalScore(0);
+    setFinalProgress(0);
+    scoreSavedRef.current = false;
+    // Force remount by going to menu then playing
     setGameState('MENU');
-    setTimeout(() => setGameState('PLAYING'), 100);
+    setTimeout(() => setGameState('PLAYING'), 50);
   };
 
   const handleBackToMenu = () => {
     if (wsRef.current) {
       wsRef.current.close();
+      wsRef.current = null;
     }
     setData(null);
     setIsPaused(false);
     setGameEnded(false);
-    gameEndedRef.current = false;
+    setGameWon(false);
+    setFinalScore(0);
+    setFinalProgress(0);
+    scoreSavedRef.current = false;
     setGameState('MENU');
   };
 
@@ -191,16 +228,13 @@ function App() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Get car color class based on settings
-  const getCarColorClass = () => {
-    return `${settings.carColor}-car`;
-  };
+  const getCarColorClass = () => `${settings.carColor}-car`;
 
   return (
     <div className="App">
       <div className="scanlines"></div>
 
-      {/* ===== SETTINGS MODAL ===== */}
+      {/* Settings Modal */}
       {showSettingsModal && (
         <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
           <div className="modal settings-modal" onClick={e => e.stopPropagation()}>
@@ -272,7 +306,7 @@ function App() {
         </div>
       )}
 
-      {/* ===== QUANTUM MODAL ===== */}
+      {/* Quantum Modal */}
       {showQuantumModal && (
         <div className="modal-overlay" onClick={() => setShowQuantumModal(false)}>
           <div className="modal quantum-modal" onClick={e => e.stopPropagation()}>
@@ -303,7 +337,7 @@ function App() {
 
             <div className="modal-section">
               <h3>🎯 Objective</h3>
-              <p className="readable-text">Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics. The progress bar shows how far you've come.</p>
+              <p className="readable-text">Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics.</p>
             </div>
 
             <div className="modal-section">
@@ -311,19 +345,19 @@ function App() {
               <div className="quantum-explanation">
                 <div className="quantum-concept">
                   <h4>🌀 Superposition</h4>
-                  <p className="readable-text">Just like Schrödinger's cat, your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this quantum state!</p>
+                  <p className="readable-text">Your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this state!</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>🔗 Entanglement</h4>
-                  <p className="readable-text">In superposition, your car splits across <strong>two parallel universes</strong> (α and β). The cars are quantum entangled - what happens to one affects the other!</p>
+                  <p className="readable-text">In superposition, your car splits across <strong>two parallel universes</strong> (α and β).</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>🎲 Probability</h4>
-                  <p className="readable-text">The <strong>opacity of each car</strong> shows its probability of being there. When a laser approaches, collision is determined probabilistically based on your quantum state.</p>
+                  <p className="readable-text">The <strong>opacity of each car</strong> shows its probability. Collision is probabilistic!</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>📉 Wave Function Collapse</h4>
-                  <p className="readable-text">When you dodge a laser, the quantum state <strong>collapses</strong> - your car returns to a single definite classical state in Universe α.</p>
+                  <p className="readable-text">When you dodge a laser, the quantum state <strong>collapses</strong> to classical.</p>
                 </div>
               </div>
             </div>
@@ -333,7 +367,7 @@ function App() {
         </div>
       )}
 
-      {/* ===== STATS MODAL ===== */}
+      {/* Stats Modal */}
       {showStatsModal && (
         <div className="modal-overlay" onClick={() => setShowStatsModal(false)}>
           <div className="modal stats-modal" onClick={e => e.stopPropagation()}>
@@ -384,11 +418,10 @@ function App() {
         </div>
       )}
 
-      {/* ===== MENU SCREEN ===== */}
+      {/* Menu Screen */}
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
-            {/* F1 Night Race Background */}
             <img
               src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&q=80"
               alt="Racing Background"
@@ -420,13 +453,9 @@ function App() {
               </div>
             </div>
 
+            {/* Clean START button - no stripes */}
             <button className="start-btn" onClick={() => setGameState('PLAYING')}>
-              <div className="start-btn-main">START</div>
-              <div className="start-btn-stripes">
-                <div className="stripe"></div>
-                <div className="stripe"></div>
-                <div className="stripe"></div>
-              </div>
+              START
             </button>
           </div>
 
@@ -449,7 +478,7 @@ function App() {
             </div>
           )}
 
-          {/* Game Over Overlay - Shows game (crash) in background */}
+          {/* GAME OVER Overlay */}
           {gameEnded && (
             <div className="game-over-overlay">
               <div className="game-over-content">
@@ -457,15 +486,15 @@ function App() {
                   <>
                     <h2 className="win-title">🏆 RACE COMPLETE!</h2>
                     <p className="game-over-player">{settings.playerName}</p>
-                    <p className="game-over-score">FINAL SCORE: {data?.score}</p>
+                    <p className="game-over-score">FINAL SCORE: {finalScore}</p>
                     <p className="win-message">You survived the quantum gauntlet!</p>
                   </>
                 ) : (
                   <>
                     <h2 className="lose-title">💥 GAME OVER</h2>
                     <p className="game-over-player">{settings.playerName}</p>
-                    <p className="game-over-score">SCORE: {data?.score}</p>
-                    <p className="progress-text">Progress: {Math.round(progress)}%</p>
+                    <p className="game-over-score">SCORE: {finalScore}</p>
+                    <p className="progress-text">Progress: {Math.round(finalProgress)}%</p>
                   </>
                 )}
                 <div className="game-over-buttons">
@@ -480,14 +509,14 @@ function App() {
             </div>
           )}
 
-          {/* Game Area - Visible in background when game over */}
+          {/* Game Area - frozen when game over */}
           <div className={`game-area ${inSuperposition ? 'split' : 'single'} ${gameEnded ? 'crashed' : ''}`}>
 
             {/* Progress Bar */}
             <div className="progress-container">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-                <div className="progress-car" style={{ left: `${progress}%` }}>🏎️</div>
+                <div className="progress-fill" style={{ width: `${data?.progress || 0}%` }}></div>
+                <div className="progress-car" style={{ left: `${data?.progress || 0}%` }}>🏎️</div>
               </div>
               <div className="progress-labels">
                 <span>START</span>
@@ -519,7 +548,7 @@ function App() {
 
               <div className="divider"></div>
 
-              {data?.lasers.filter(l => l.universe === 'A').map((l, i) => (
+              {data?.lasers?.filter(l => l.universe === 'A').map((l, i) => (
                 <div
                   key={`laser-a-${i}`}
                   className="laser"
@@ -572,7 +601,7 @@ function App() {
 
                 <div className="divider"></div>
 
-                {data?.lasers.filter(l => l.universe === 'B').map((l, i) => (
+                {data?.lasers?.filter(l => l.universe === 'B').map((l, i) => (
                   <div
                     key={`laser-b-${i}`}
                     className="laser"

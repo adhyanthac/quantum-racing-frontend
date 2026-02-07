@@ -349,11 +349,11 @@ function App() {
             <h2>⚛️ Quantum Racing Guide</h2>
 
             <div className="modal-section">
-              <h3>🎮 How to Play</h3>
+              <h3>🎮 Controls</h3>
               <div className="controls-list">
                 <div className="control-item">
                   <span className="key-badge">H</span>
-                  <span className="control-desc">Enter Superposition (split into 2 universes)</span>
+                  <span className="control-desc">Quantum Shield - Dodge one laser guaranteed!</span>
                 </div>
                 <div className="control-item">
                   <span className="key-badge">A / D</span>
@@ -371,28 +371,26 @@ function App() {
             </div>
 
             <div className="modal-section">
-              <h3>🎯 Objective</h3>
-              <p className="readable-text">Survive for <strong>60 seconds</strong> to complete the race! Avoid incoming lasers using quantum mechanics.</p>
+              <h3>🛡️ Strategic Superposition</h3>
+              <p className="readable-text">Press <strong>H</strong> to enter superposition and gain a <strong>Quantum Shield</strong>!
+                The first laser that would hit you is <strong>automatically dodged</strong> - your quantum state collapses to the safe position.
+                Use this strategically when you see an unavoidable laser!</p>
             </div>
 
             <div className="modal-section">
-              <h3>⚛️ The Quantum Physics</h3>
+              <h3>⚛️ The Real Physics</h3>
               <div className="quantum-explanation">
                 <div className="quantum-concept">
                   <h4>🌀 Superposition</h4>
-                  <p className="readable-text">Your car exists in <strong>multiple lanes simultaneously</strong> until observed. Press H to enter this state!</p>
+                  <p className="readable-text">Pressing H applies a <strong>Hadamard gate</strong>, putting your car in a superposition of being in both lanes simultaneously.</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>🔗 Entanglement</h4>
-                  <p className="readable-text">In superposition, your car splits across <strong>two parallel universes</strong> (α and β).</p>
-                </div>
-                <div className="quantum-concept">
-                  <h4>🎲 Probability</h4>
-                  <p className="readable-text">The <strong>opacity of each car</strong> shows its probability. Collision is probabilistic!</p>
+                  <p className="readable-text">A <strong>CNOT gate</strong> creates an entangled Bell state |Φ+⟩ across two universes. The cars are correlated!</p>
                 </div>
                 <div className="quantum-concept">
                   <h4>📉 Wave Function Collapse</h4>
-                  <p className="readable-text">When you dodge a laser, the quantum state <strong>collapses</strong> to classical.</p>
+                  <p className="readable-text">When a laser passes, measurement occurs and the quantum state <strong>collapses</strong> to a definite position.</p>
                 </div>
               </div>
             </div>
@@ -457,10 +455,10 @@ function App() {
       {gameState === 'MENU' ? (
         <div className="menu-screen">
           <div className="menu-bg">
-            {/* F1 Race Car on Track */}
+            {/* Sports Car on Road at Night */}
             <img
-              src="https://images.unsplash.com/photo-1504707748692-419802cf939d?w=1920&q=80"
-              alt="F1 Racing Night"
+              src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=80"
+              alt="Racing Car"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>

@@ -606,7 +606,6 @@ function App() {
             <div className="mobile-controls">
               <button
                 className={`mobile-btn hadamard-btn ${inSuperposition ? 'active' : ''}`}
-                onTouchStart={handleHadamard}
                 onClick={handleHadamard}
               >
                 H
@@ -616,7 +615,6 @@ function App() {
               <div className="swap-controls">
                 <button
                   className="mobile-btn swap-btn"
-                  onTouchStart={handlePauliA}
                   onClick={handlePauliA}
                 >
                   ⟷

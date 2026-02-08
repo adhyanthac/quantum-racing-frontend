@@ -535,8 +535,21 @@ function App() {
                   <div className="car-wheel wheel-bl"></div>
                   <div className="car-wheel wheel-br"></div>
                 </div>
-
               </div>
+
+              {/* Probability Display for Universe A */}
+              {inSuperposition && (
+                <div className="probability-display">
+                  <div className="prob-item prob-left">
+                    <span className="prob-label">L</span>
+                    <span className="prob-value">{data?.prob_A_left || 0}%</span>
+                  </div>
+                  <div className="prob-item prob-right">
+                    <span className="prob-label">R</span>
+                    <span className="prob-value">{data?.prob_A_right || 0}%</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Universe B (only visible in superposition) */}
@@ -583,7 +596,18 @@ function App() {
                     <div className="car-wheel wheel-bl"></div>
                     <div className="car-wheel wheel-br"></div>
                   </div>
+                </div>
 
+                {/* Probability Display for Universe B */}
+                <div className="probability-display">
+                  <div className="prob-item prob-left">
+                    <span className="prob-label">L</span>
+                    <span className="prob-value">{data?.prob_B_left || 0}%</span>
+                  </div>
+                  <div className="prob-item prob-right">
+                    <span className="prob-label">R</span>
+                    <span className="prob-value">{data?.prob_B_right || 0}%</span>
+                  </div>
                 </div>
               </div>
             )}

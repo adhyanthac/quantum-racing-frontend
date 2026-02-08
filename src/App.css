@@ -1471,6 +1471,60 @@ body {
   }
 }
 
+/* ===== PROBABILITY DISPLAY ===== */
+.probability-display {
+  position: absolute;
+  bottom: 12%;
+  left: 0;
+  width: 100%;
+  padding: 0 10%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.prob-item {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 45px;
+  backdrop-filter: blur(4px);
+}
+
+.prob-item.prob-left {
+  border-color: #03a9f4;
+  /* Blue tint for Left */
+}
+
+.prob-item.prob-right {
+  border-color: #ff9800;
+  /* Orange tint for Right */
+}
+
+.prob-label {
+  font-size: 0.6rem;
+  color: #aaa;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.prob-value {
+  font-size: 0.75rem;
+  color: #fff;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+}
+
+/* Adjust car position to make room for stats */
+.superposition-car .car-body {
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+}
+
 /* ===== SETTINGS IMPROVEMENTS ===== */
 .settings-content {
   display: flex;

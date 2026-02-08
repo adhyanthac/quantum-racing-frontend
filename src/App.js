@@ -522,11 +522,7 @@ function App() {
                   <div className="car-wheel wheel-bl"></div>
                   <div className="car-wheel wheel-br"></div>
                 </div>
-                {inSuperposition && (
-                  <div className="probability-badge">
-                    {Math.round(carA.lane === 0 ? carA.left_prob * 100 : carA.right_prob * 100)}%
-                  </div>
-                )}
+
               </div>
             </div>
 
@@ -574,9 +570,7 @@ function App() {
                     <div className="car-wheel wheel-bl"></div>
                     <div className="car-wheel wheel-br"></div>
                   </div>
-                  <div className="probability-badge">
-                    {Math.round(carB.lane === 0 ? carB.left_prob * 100 : carB.right_prob * 100)}%
-                  </div>
+
                 </div>
               </div>
             )}

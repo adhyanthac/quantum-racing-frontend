@@ -225,12 +225,6 @@ function App() {
     }
   };
 
-  const handlePauliB = () => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
-      wsRef.current.send(JSON.stringify({ action: 'pauli_x_B' }));
-    }
-  };
-
   const getCarColorClass = () => {
     const colorMap = {
       'red': 'red-car',

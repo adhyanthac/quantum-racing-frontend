@@ -835,44 +835,44 @@ body {
 }
 
 /* Car color variations */
-.red-car {
-  background: linear-gradient(180deg, #ff6b6b 0%, #e53935 40%, #c62828 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(229, 57, 53, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+/* Car color variations - Image Filter */
+.car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
 }
 
-.orange-car {
-  background: linear-gradient(180deg, #ffb347 0%, #ff8c00 40%, #e65100 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 140, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.red-car {
+  filter: hue-rotate(180deg) drop-shadow(0 0 8px rgba(255, 50, 50, 0.6));
 }
 
-.yellow-car {
-  background: linear-gradient(180deg, #fff176 0%, #fdd835 40%, #f9a825 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(253, 216, 53, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.orange-car {
+  filter: hue-rotate(210deg) drop-shadow(0 0 8px rgba(255, 150, 0, 0.6));
 }
 
-.green-car {
-  background: linear-gradient(180deg, #81c784 0%, #4caf50 40%, #2e7d32 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(76, 175, 80, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.yellow-car {
+  filter: hue-rotate(240deg) drop-shadow(0 0 8px rgba(255, 255, 0, 0.6));
 }
 
-.cyan-car {
-  background: linear-gradient(180deg, #4dd0e1 0%, #00acc1 40%, #00838f 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 172, 193, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.green-car {
+  filter: hue-rotate(300deg) drop-shadow(0 0 8px rgba(50, 255, 50, 0.6));
 }
 
-.blue-car {
-  background: linear-gradient(180deg, #64b5f6 0%, #1e88e5 40%, #1565c0 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(30, 136, 229, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.cyan-car {
+  filter: hue-rotate(0deg) drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
 }
 
-.purple-car {
-  background: linear-gradient(180deg, #ba68c8 0%, #8e24aa 40%, #6a1b9a 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(142, 36, 170, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.blue-car {
+  filter: hue-rotate(60deg) drop-shadow(0 0 8px rgba(50, 100, 255, 0.6));
 }
 
-.pink-car {
-  background: linear-gradient(180deg, #f48fb1 0%, #e91e63 40%, #c2185b 100%);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 25px rgba(233, 30, 99, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+.car-image.purple-car {
+  filter: hue-rotate(100deg) drop-shadow(0 0 8px rgba(200, 0, 255, 0.6));
+}
+
+.car-image.pink-car {
+  filter: hue-rotate(130deg) drop-shadow(0 0 8px rgba(255, 50, 150, 0.6));
 }
 
 .car-top {

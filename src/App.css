@@ -1693,4 +1693,203 @@ body {
   .pane {
     padding-bottom: 100px;
   }
+
+  /* ===== MOBILE MENU RESPONSIVE ===== */
+  .title {
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    top: 30px;
+    width: 90%;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  .menu-screen {
+    overflow-y: auto;
+  }
+
+  .bottom-menu {
+    padding: 15px 15px 25px;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .menu-icons {
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .menu-icon-btn .icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
+
+  .menu-icon-btn .label {
+    font-size: 0.55rem;
+  }
+
+  .start-btn {
+    padding: 15px 50px;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Modal adjustments for mobile */
+  .modal {
+    max-width: 95%;
+    max-height: 90vh;
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .modal h2 {
+    font-size: 1.4rem;
+  }
+
+  .modal h3 {
+    font-size: 0.9rem;
+  }
+
+  .control-item {
+    padding: 10px 12px;
+  }
+
+  .key-badge {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    min-width: 50px;
+  }
+
+  .control-desc {
+    font-size: 0.8rem;
+  }
+
+  .quantum-concept {
+    padding: 14px;
+  }
+
+  .quantum-concept h4 {
+    font-size: 0.85rem;
+  }
+
+  .quantum-concept p {
+    font-size: 0.8rem;
+  }
+
+  /* Settings modal */
+  .color-options {
+    gap: 8px;
+  }
+
+  .color-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .speed-options {
+    flex-direction: column;
+  }
+
+  /* Progress bar */
+  .progress-container {
+    width: 90%;
+    top: 15px;
+  }
+
+  /* Score HUD */
+  .score-hud {
+    font-size: 1rem;
+    top: 50px;
+  }
+
+  /* Pause button */
+  .pause-btn {
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  /* Superposition indicator */
+  .superposition-active {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+
+  /* Universe labels */
+  .universe-label {
+    font-size: 0.7rem;
+    top: 8px;
+  }
+
+  .controls-hint {
+    font-size: 0.65rem;
+    top: 28px;
+    padding: 3px 8px;
+  }
+
+  /* Game over */
+  .game-over-content {
+    padding: 25px 20px;
+  }
+
+  .win-title,
+  .lose-title {
+    font-size: 1.6rem;
+  }
+
+  .final-stats {
+    gap: 15px;
+  }
+
+  .final-stats .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .game-over-btns {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .restart-btn,
+  .menu-btn {
+    width: 100%;
+  }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 400px) {
+  .title {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .menu-icon-btn .icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+
+  .start-btn {
+    font-size: 1.2rem;
+    padding: 12px 40px;
+  }
+
+  .mobile-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.3rem;
+  }
+
+  .swap-btn {
+    width: 80px;
+    height: 55px;
+  }
 }

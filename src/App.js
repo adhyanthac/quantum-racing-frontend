@@ -250,62 +250,91 @@ function App() {
         <div className="modal-overlay" onClick={() => setShowQuantumModal(false)}>
           <div className="modal quantum-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowQuantumModal(false)}>✕</button>
-            <h2>⚛️ Quantum Guide</h2>
+            <h2>🚀 HOW TO PLAY</h2>
+
+            <div className="modal-section">
+              <h3>🎯 Goal</h3>
+              <p className="readable-text goal-text">
+                <strong>Survive for 60 seconds!</strong> Dodge deadly lasers by switching lanes and using
+                <span className="highlight-text"> QUANTUM POWERS</span> to exist in two places at once!
+              </p>
+            </div>
 
             <div className="modal-section">
               <h3>🎮 Controls</h3>
               <div className="controls-list">
-                <div className="control-item">
-                  <span className="key-badge">H</span>
-                  <span className="control-desc">Enter Superposition (creates entangled Universe B)</span>
+                <div className="control-item primary-control">
+                  <span className="key-badge big-badge">H</span>
+                  <div className="control-info">
+                    <span className="control-title">QUANTUM MODE 🌀</span>
+                    <span className="control-desc">Split into 2 universes! Your car exists in BOTH lanes with different chances of survival.</span>
+                  </div>
                 </div>
                 <div className="control-item">
                   <span className="key-badge">A / D</span>
-                  <span className="control-desc">Switch lane in Universe α (Pauli-X gate)</span>
+                  <div className="control-info">
+                    <span className="control-title">Switch Lanes</span>
+                    <span className="control-desc">Move left/right to dodge lasers. In quantum mode, this shifts your probabilities!</span>
+                  </div>
                 </div>
                 <div className="control-item">
                   <span className="key-badge">← / →</span>
-                  <span className="control-desc">Switch lane in Universe β (Pauli-X gate)</span>
+                  <div className="control-info">
+                    <span className="control-title">Universe β Control</span>
+                    <span className="control-desc">In quantum mode, control your second universe's car independently!</span>
+                  </div>
+                </div>
+                <div className="control-item">
+                  <span className="key-badge">P</span>
+                  <div className="control-info">
+                    <span className="control-title">Pause</span>
+                    <span className="control-desc">Take a breather when things get intense!</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="modal-section">
-              <h3>⚛️ Quantum Mechanics</h3>
-              <div className="quantum-explanation">
-                <div className="quantum-concept">
-                  <h4>🌀 Superposition (H Gate)</h4>
-                  <p className="readable-text">
-                    Press <strong>H</strong> to apply a Hadamard gate + CNOT, creating an <strong>entangled Bell state</strong>.
-                    Your car now exists in BOTH universes simultaneously!
-                  </p>
+              <h3>💡 Pro Tips</h3>
+              <div className="tips-list">
+                <div className="tip-item">
+                  <span className="tip-emoji">⚡</span>
+                  <span className="tip-text">Press <strong>H</strong> when a laser is coming - quantum mode gives you a chance to "tunnel" through!</span>
                 </div>
-                <div className="quantum-concept">
-                  <h4>🔗 Entanglement (CNOT)</h4>
-                  <p className="readable-text">
-                    The two cars are <strong>quantum entangled</strong>. Their fates are correlated -
-                    what happens to one affects the probability of the other!
-                  </p>
+                <div className="tip-item">
+                  <span className="tip-emoji">👀</span>
+                  <span className="tip-text">Watch the <strong>probability percentages</strong> - higher % = better chance of surviving in that lane!</span>
                 </div>
-                <div className="quantum-concept">
-                  <h4>📉 Measurement (Born Rule)</h4>
-                  <p className="readable-text">
-                    When a laser reaches your car, it's a <strong>quantum measurement</strong>.
-                    The probability of passing or crashing follows the <strong>Born rule</strong>!
-                  </p>
+                <div className="tip-item">
+                  <span className="tip-emoji">🎲</span>
+                  <span className="tip-text">Each quantum mode gives you <strong>random probabilities</strong> - adapt your strategy!</span>
+                </div>
+                <div className="tip-item">
+                  <span className="tip-emoji">🔄</span>
+                  <span className="tip-text">After surviving a laser in quantum mode, you <strong>collapse back</strong> - hit H again!</span>
                 </div>
               </div>
             </div>
 
-            <div className="modal-section">
-              <h3>🎯 Strategy</h3>
-              <p className="readable-text">
-                You <strong>MUST</strong> use superposition to survive! In classical mode, lasers are unavoidable.
-                In superposition, manipulate both universes to maximize your survival probability!
-              </p>
+            <div className="modal-section physics-section">
+              <h3>⚛️ The Quantum Physics (For Nerds! 🤓)</h3>
+              <div className="quantum-explanation collapsed-section">
+                <div className="quantum-concept mini">
+                  <strong>Superposition:</strong> Pressing H applies a Hadamard gate, creating a quantum superposition where your car exists in multiple states simultaneously.
+                </div>
+                <div className="quantum-concept mini">
+                  <strong>Entanglement:</strong> The two universe cars are quantum entangled via a CNOT gate - their fates are correlated!
+                </div>
+                <div className="quantum-concept mini">
+                  <strong>Born Rule:</strong> When a laser hits, it "measures" your quantum state. Survival probability follows |ψ|² - real quantum mechanics!
+                </div>
+                <div className="quantum-concept mini">
+                  <strong>Wave Function Collapse:</strong> Passing through a laser collapses the superposition back to a definite classical state.
+                </div>
+              </div>
             </div>
 
-            <button className="modal-btn" onClick={() => setShowQuantumModal(false)}>Got it!</button>
+            <button className="modal-btn play-btn" onClick={() => setShowQuantumModal(false)}>🎮 LET'S RACE!</button>
           </div>
         </div>
       )}

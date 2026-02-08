@@ -393,6 +393,127 @@ body {
   color: #c0c0c0;
 }
 
+/* New Quantum Guide Styles */
+.goal-text {
+  font-size: 1.1rem !important;
+  text-align: center;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(139, 195, 74, 0.1));
+  border-radius: 12px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.highlight-text {
+  color: #00e676;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+}
+
+.control-item.primary-control {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(76, 81, 191, 0.15));
+  border-left: 4px solid #667eea;
+  padding: 15px;
+}
+
+.key-badge.big-badge {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  min-width: 70px;
+  background: linear-gradient(135deg, #667eea, #4c51bf);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.control-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 15px;
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 10px;
+  border-left: 3px solid #ffc107;
+}
+
+.tip-emoji {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-family: var(--font-readable);
+  font-size: 0.9rem;
+  color: #d0d0d0;
+  line-height: 1.5;
+}
+
+.physics-section {
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.physics-section h3 {
+  color: #667eea;
+  font-size: 0.95rem;
+}
+
+.quantum-concept.mini {
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  background: rgba(102, 126, 234, 0.08);
+  border-left: 2px solid #667eea;
+  margin-bottom: 8px;
+  font-family: var(--font-readable);
+  color: #b0b0b0;
+  line-height: 1.5;
+}
+
+.quantum-concept.mini strong {
+  color: #a5b4fc;
+}
+
+.modal-btn.play-btn {
+  font-size: 1.2rem;
+  padding: 18px;
+  background: linear-gradient(180deg, #00c853 0%, #00a846 100%);
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+  animation: pulse-btn 2s ease-in-out infinite;
+}
+
+@keyframes pulse-btn {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+  }
+
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 200, 83, 0.6);
+  }
+}
+
 .modal-btn {
   width: 100%;
   padding: 15px;

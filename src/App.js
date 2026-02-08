@@ -212,6 +212,25 @@ function App() {
     }
   };
 
+  // Mobile touch controls
+  const handleHadamard = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
+      wsRef.current.send(JSON.stringify({ action: 'hadamard' }));
+    }
+  };
+
+  const handlePauliA = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
+      wsRef.current.send(JSON.stringify({ action: 'pauli_x_A' }));
+    }
+  };
+
+  const handlePauliB = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
+      wsRef.current.send(JSON.stringify({ action: 'pauli_x_B' }));
+    }
+  };
+
   const getCarColorClass = () => {
     const colorMap = {
       'red': 'red-car',
@@ -585,6 +604,31 @@ function App() {
               <div className="control-key"><span>H</span> Superposition</div>
               <div className="control-key"><span>A/D</span> Universe α</div>
               {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
+            </div>
+          )}
+
+          {/* Mobile Touch Controls */}
+          {!gameEnded && (
+            <div className="mobile-controls">
+              <button
+                className={`mobile-btn hadamard-btn ${inSuperposition ? 'active' : ''}`}
+                onTouchStart={handleHadamard}
+                onClick={handleHadamard}
+              >
+                H
+                <span className="btn-label">Superposition</span>
+              </button>
+
+              <div className="swap-controls">
+                <button
+                  className="mobile-btn swap-btn"
+                  onTouchStart={handlePauliA}
+                  onClick={handlePauliA}
+                >
+                  ⟷
+                  <span className="btn-label">SWAP</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -1574,3 +1574,123 @@ body {
   font-weight: bold;
   color: var(--primary-green);
 }
+
+/* ===== MOBILE TOUCH CONTROLS ===== */
+.mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  z-index: 1000;
+  justify-content: center;
+  gap: 20px;
+  pointer-events: none;
+}
+
+.mobile-controls>* {
+  pointer-events: auto;
+}
+
+.mobile-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.mobile-btn:active {
+  transform: scale(0.95);
+  background: rgba(76, 175, 80, 0.5);
+}
+
+.mobile-btn .btn-label {
+  font-size: 0.5rem;
+  margin-top: 2px;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+/* Hadamard Button */
+.hadamard-btn {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.6), rgba(76, 81, 191, 0.6));
+  border-color: #667eea;
+}
+
+.hadamard-btn.active {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.6), rgba(56, 142, 60, 0.6));
+  border-color: var(--primary-green);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+}
+
+/* Swap Button */
+.swap-btn {
+  background: linear-gradient(135deg, rgba(246, 173, 85, 0.6), rgba(237, 137, 54, 0.6));
+  border-color: #f6ad55;
+  width: 100px;
+  height: 70px;
+  border-radius: 15px;
+}
+
+.swap-controls {
+  display: flex;
+  gap: 10px;
+}
+
+/* Show mobile controls on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .mobile-controls {
+    display: flex;
+  }
+
+  .controls-hud {
+    display: none;
+  }
+}
+
+/* Also show on small screens */
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: flex;
+  }
+
+  .controls-hud {
+    display: none;
+  }
+
+  .mobile-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 1.5rem;
+  }
+
+  .swap-btn {
+    width: 90px;
+    height: 60px;
+  }
+
+  /* Adjust game area for mobile controls */
+  .game-area {
+    height: calc(100vh - 150px);
+  }
+
+  .pane {
+    padding-bottom: 100px;
+  }
+}

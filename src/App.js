@@ -518,27 +518,67 @@ function App() {
                 />
               ))}
 
-              {/* Universe A Car */}
-              <div
-                className={`car-container ${inSuperposition ? 'superposition-car' : ''}`}
-                style={{
-                  left: carA.lane === 0 ? '25%' : '75%',
-                  // In superposition, opacity reflects probability! Min 0.3 opacity so it's always visible
-                  opacity: inSuperposition
-                    ? Math.max(0.3, carA.lane === 0 ? carA.left_prob : carA.right_prob)
-                    : 1
-                }}
-              >
-                <div className={`car-body ${getCarColorClass()}`}>
-                  <div className="car-top"></div>
-                  <div className="car-window"></div>
-                  <div className="car-hood"></div>
-                  <div className="car-wheel wheel-fl"></div>
-                  <div className="car-wheel wheel-fr"></div>
-                  <div className="car-wheel wheel-bl"></div>
-                  <div className="car-wheel wheel-br"></div>
+              {/* Universe A Cars - Show BOTH positions in superposition! */}
+              {inSuperposition ? (
+                <>
+                  {/* Left Ghost Car */}
+                  <div
+                    className="car-container superposition-car"
+                    style={{
+                      left: '25%',
+                      opacity: Math.max(0.2, carA.left_prob)
+                    }}
+                  >
+                    <div className={`car-body ${getCarColorClass()}`}>
+                      <div className="car-top"></div>
+                      <div className="car-window"></div>
+                      <div className="car-hood"></div>
+                      <div className="car-wheel wheel-fl"></div>
+                      <div className="car-wheel wheel-fr"></div>
+                      <div className="car-wheel wheel-bl"></div>
+                      <div className="car-wheel wheel-br"></div>
+                    </div>
+                  </div>
+
+                  {/* Right Ghost Car */}
+                  <div
+                    className="car-container superposition-car"
+                    style={{
+                      left: '75%',
+                      opacity: Math.max(0.2, carA.right_prob)
+                    }}
+                  >
+                    <div className={`car-body ${getCarColorClass()}`}>
+                      <div className="car-top"></div>
+                      <div className="car-window"></div>
+                      <div className="car-hood"></div>
+                      <div className="car-wheel wheel-fl"></div>
+                      <div className="car-wheel wheel-fr"></div>
+                      <div className="car-wheel wheel-bl"></div>
+                      <div className="car-wheel wheel-br"></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* Classical Car A */
+                <div
+                  className="car-container"
+                  style={{
+                    left: carA.lane === 0 ? '25%' : '75%',
+                    opacity: 1
+                  }}
+                >
+                  <div className={`car-body ${getCarColorClass()}`}>
+                    <div className="car-top"></div>
+                    <div className="car-window"></div>
+                    <div className="car-hood"></div>
+                    <div className="car-wheel wheel-fl"></div>
+                    <div className="car-wheel wheel-fr"></div>
+                    <div className="car-wheel wheel-bl"></div>
+                    <div className="car-wheel wheel-br"></div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Probability Display for Universe A */}
               {inSuperposition && (
@@ -582,15 +622,32 @@ function App() {
                   />
                 ))}
 
-                {/* Universe B Car */}
+                {/* Universe B Cars - Show BOTH positions! */}
+                {/* Left Ghost Car B */}
                 <div
                   className="car-container superposition-car"
                   style={{
-                    left: carB.lane === 0 ? '25%' : '75%',
-                    // Opacity reflects probability
-                    opacity: inSuperposition
-                      ? Math.max(0.3, carB.lane === 0 ? carB.left_prob : carB.right_prob)
-                      : 0.6
+                    left: '25%',
+                    opacity: Math.max(0.2, carB.left_prob)
+                  }}
+                >
+                  <div className="car-body blue-car">
+                    <div className="car-top"></div>
+                    <div className="car-window"></div>
+                    <div className="car-hood"></div>
+                    <div className="car-wheel wheel-fl"></div>
+                    <div className="car-wheel wheel-fr"></div>
+                    <div className="car-wheel wheel-bl"></div>
+                    <div className="car-wheel wheel-br"></div>
+                  </div>
+                </div>
+
+                {/* Right Ghost Car B */}
+                <div
+                  className="car-container superposition-car"
+                  style={{
+                    left: '75%',
+                    opacity: Math.max(0.2, carB.right_prob)
                   }}
                 >
                   <div className="car-body blue-car">

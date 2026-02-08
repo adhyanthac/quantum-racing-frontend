@@ -540,15 +540,7 @@ function App() {
                       opacity: Math.max(0.2, carA.right_prob)
                     }}
                   >
-                    <div className={`car-body ${getCarColorClass()}`}>
-                      <div className="car-top"></div>
-                      <div className="car-window"></div>
-                      <div className="car-hood"></div>
-                      <div className="car-wheel wheel-fl"></div>
-                      <div className="car-wheel wheel-fr"></div>
-                      <div className="car-wheel wheel-bl"></div>
-                      <div className="car-wheel wheel-br"></div>
-                    </div>
+                    <img src="/car.svg" className={`car-image ${getCarColorClass()}`} alt="Car A" />
                   </div>
                 </>
               ) : (
@@ -560,15 +552,7 @@ function App() {
                     opacity: 1
                   }}
                 >
-                  <div className={`car-body ${getCarColorClass()}`}>
-                    <div className="car-top"></div>
-                    <div className="car-window"></div>
-                    <div className="car-hood"></div>
-                    <div className="car-wheel wheel-fl"></div>
-                    <div className="car-wheel wheel-fr"></div>
-                    <div className="car-wheel wheel-bl"></div>
-                    <div className="car-wheel wheel-br"></div>
-                  </div>
+                  <img src="/car.svg" className={`car-image ${getCarColorClass()}`} alt="Car A" />
                 </div>
               )}
 
@@ -634,15 +618,7 @@ function App() {
                     opacity: Math.max(0.2, carB.right_prob)
                   }}
                 >
-                  <div className="car-body blue-car">
-                    <div className="car-top"></div>
-                    <div className="car-window"></div>
-                    <div className="car-hood"></div>
-                    <div className="car-wheel wheel-fl"></div>
-                    <div className="car-wheel wheel-fr"></div>
-                    <div className="car-wheel wheel-bl"></div>
-                    <div className="car-wheel wheel-br"></div>
-                  </div>
+                  <img src="/car.svg" className="car-image blue-car" alt="Car B" />
                 </div>
 
                 {/* Probability Display for Universe B */}

@@ -378,8 +378,8 @@ function App() {
         <div className="menu-screen">
           <div className="menu-bg">
             <img
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80"
-              alt="Road Background"
+              src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
+              alt="F1 Night Race"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
             <div className="menu-bg-overlay"></div>

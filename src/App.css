@@ -1525,6 +1525,21 @@ body {
   box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
 }
 
+/* Highlight the higher probability */
+.prob-item.highlight-prob {
+  border-color: #00e676 !important;
+  /* Bright Green */
+  background: rgba(0, 230, 118, 0.25);
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.prob-item.highlight-prob .prob-value {
+  color: #00e676;
+  text-shadow: 0 0 5px rgba(0, 230, 118, 0.8);
+}
+
 /* ===== SETTINGS IMPROVEMENTS ===== */
 .settings-content {
   display: flex;

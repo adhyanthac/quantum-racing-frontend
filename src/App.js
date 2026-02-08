@@ -523,7 +523,10 @@ function App() {
                 className={`car-container ${inSuperposition ? 'superposition-car' : ''}`}
                 style={{
                   left: carA.lane === 0 ? '25%' : '75%',
-                  opacity: inSuperposition ? 0.6 : 1
+                  // In superposition, opacity reflects probability! Min 0.3 opacity so it's always visible
+                  opacity: inSuperposition
+                    ? Math.max(0.3, carA.lane === 0 ? carA.left_prob : carA.right_prob)
+                    : 1
                 }}
               >
                 <div className={`car-body ${getCarColorClass()}`}>
@@ -540,11 +543,11 @@ function App() {
               {/* Probability Display for Universe A */}
               {inSuperposition && (
                 <div className="probability-display">
-                  <div className="prob-item prob-left">
+                  <div className={`prob-item prob-left ${data?.prob_A_left > data?.prob_A_right ? 'highlight-prob' : ''}`}>
                     <span className="prob-label">L</span>
                     <span className="prob-value">{data?.prob_A_left || 0}%</span>
                   </div>
-                  <div className="prob-item prob-right">
+                  <div className={`prob-item prob-right ${data?.prob_A_right > data?.prob_A_left ? 'highlight-prob' : ''}`}>
                     <span className="prob-label">R</span>
                     <span className="prob-value">{data?.prob_A_right || 0}%</span>
                   </div>
@@ -584,7 +587,10 @@ function App() {
                   className="car-container superposition-car"
                   style={{
                     left: carB.lane === 0 ? '25%' : '75%',
-                    opacity: 0.6
+                    // Opacity reflects probability
+                    opacity: inSuperposition
+                      ? Math.max(0.3, carB.lane === 0 ? carB.left_prob : carB.right_prob)
+                      : 0.6
                   }}
                 >
                   <div className="car-body blue-car">
@@ -600,11 +606,11 @@ function App() {
 
                 {/* Probability Display for Universe B */}
                 <div className="probability-display">
-                  <div className="prob-item prob-left">
+                  <div className={`prob-item prob-left ${data?.prob_B_left > data?.prob_B_right ? 'highlight-prob' : ''}`}>
                     <span className="prob-label">L</span>
                     <span className="prob-value">{data?.prob_B_left || 0}%</span>
                   </div>
-                  <div className="prob-item prob-right">
+                  <div className={`prob-item prob-right ${data?.prob_B_right > data?.prob_B_left ? 'highlight-prob' : ''}`}>
                     <span className="prob-label">R</span>
                     <span className="prob-value">{data?.prob_B_right || 0}%</span>
                   </div>

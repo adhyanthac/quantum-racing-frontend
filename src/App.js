@@ -465,382 +465,385 @@ function App() {
                 ))}
               </div>
             </div>
+            <button className="modal-btn" onClick={() => setShowSettingsModal(false)}>Save</button>
           </div>
-          <button className="modal-btn" onClick={() => setShowSettingsModal(false)}>Save</button>
         </div>
-      </div>
-  )
-}
+      )
+      }
 
-{/* Stats Modal */ }
-{
-  showStatsModal && (
-    <div className="modal-overlay" onClick={() => setShowStatsModal(false)}>
-      <div className="modal stats-modal" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={() => setShowStatsModal(false)}>✕</button>
-        <h2>📊 High Scores</h2>
-        {scores.length === 0 ? (
-          <p className="no-scores readable-text">No scores yet. Play to set records!</p>
+      {/* Stats Modal */}
+      {
+        showStatsModal && (
+          <div className="modal-overlay" onClick={() => setShowStatsModal(false)}>
+            <div className="modal stats-modal" onClick={e => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setShowStatsModal(false)}>✕</button>
+              <h2>📊 High Scores</h2>
+              {scores.length === 0 ? (
+                <p className="no-scores readable-text">No scores yet. Play to set records!</p>
+              ) : (
+                <div className="scores-list">
+                  {scores.map((s, i) => (
+                    <div key={s.id} className={`score-item ${s.won ? 'won' : ''}`}>
+                      <span className="rank">#{i + 1}</span>
+                      <span className="score-value">{s.score}</span>
+                      <span className="score-date">{s.date}</span>
+                      {s.won && <span className="win-badge">🏆</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button className="modal-btn" onClick={() => setShowStatsModal(false)}>Close</button>
+            </div>
+          </div>
+        )
+      }
+
+      {/* Menu Screen */}
+      {
+        gameState === 'MENU' ? (
+          <div className="menu-screen">
+            <div className="menu-bg">
+              <img
+                src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
+                alt="F1 Night Race"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <div className="menu-bg-overlay"></div>
+            </div>
+
+            <h1 className="title">QUANTUM RACING</h1>
+
+            <div className="bottom-menu">
+              <div className="menu-icons">
+                <div className="menu-icon-btn" onClick={() => setShowSettingsModal(true)}>
+                  <div className="icon icon-settings">⚙️</div>
+                  <span className="label">Settings</span>
+                </div>
+                <div className="menu-icon-btn" onClick={() => setShowQuantumModal(true)}>
+                  <div className="icon icon-quantum">⚛️</div>
+                  <span className="label">Guide</span>
+                </div>
+                <div className="menu-icon-btn" onClick={() => setShowStatsModal(true)}>
+                  <div className="icon icon-more">📊</div>
+                  <span className="label">Stats</span>
+                </div>
+                <div className="menu-icon-btn" onClick={handleShare}>
+                  <div className="icon icon-share">{copySuccess ? '✓' : '🔗'}</div>
+                  <span className="label">{copySuccess ? 'Copied!' : 'Share'}</span>
+                </div>
+              </div>
+
+              <button className="start-btn" onClick={() => setGameState('PLAYING')}>
+                START
+              </button>
+            </div>
+          </div>
         ) : (
-          <div className="scores-list">
-            {scores.map((s, i) => (
-              <div key={s.id} className={`score-item ${s.won ? 'won' : ''}`}>
-                <span className="rank">#{i + 1}</span>
-                <span className="score-value">{s.score}</span>
-                <span className="score-date">{s.date}</span>
-                {s.won && <span className="win-badge">🏆</span>}
+          /* Game Screen */
+          <div className="game-container">
+            {/* Game Over Overlay */}
+            {gameEnded && (
+              <div className="game-over-overlay">
+                <div className="game-over-content">
+                  <h2 className={gameWon ? 'win-title' : 'lose-title'}>
+                    {gameWon ? '🏆 RACE COMPLETE!' : '💥 GAME OVER'}
+                  </h2>
+                  <div className="final-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Score</span>
+                      <span className="stat-value">{finalScore}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Progress</span>
+                      <span className="stat-value">{Math.round(finalProgress)}%</span>
+                    </div>
+                    <span className="stat-label">H Gate Uses</span>
+                    <span className="stat-value">{data?.hadamard_uses || 0}</span>
+                  </div>
+                  {gameWon ? (
+                    <div className="win-message">🎉 AMAZING RACE! 🎉</div>
+                  ) : (
+                    <div className="crash-message">💥 CRASHED! 💥</div>
+                  )}
+                  <div className="game-over-btns">
+                    <button className="restart-btn" onClick={handleRestart}>🔄 TRY AGAIN</button>
+                    <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-        <button className="modal-btn" onClick={() => setShowStatsModal(false)}>Close</button>
-      </div>
-    </div>
-  )
-}
-
-{/* Menu Screen */ }
-{
-  gameState === 'MENU' ? (
-    <div className="menu-screen">
-      <div className="menu-bg">
-        <img
-          src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
-          alt="F1 Night Race"
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-        <div className="menu-bg-overlay"></div>
-      </div>
-
-      <h1 className="title">QUANTUM RACING</h1>
-
-      <div className="bottom-menu">
-        <div className="menu-icons">
-          <div className="menu-icon-btn" onClick={() => setShowSettingsModal(true)}>
-            <div className="icon icon-settings">⚙️</div>
-            <span className="label">Settings</span>
-          </div>
-          <div className="menu-icon-btn" onClick={() => setShowQuantumModal(true)}>
-            <div className="icon icon-quantum">⚛️</div>
-            <span className="label">Guide</span>
-          </div>
-          <div className="menu-icon-btn" onClick={() => setShowStatsModal(true)}>
-            <div className="icon icon-more">📊</div>
-            <span className="label">Stats</span>
-          </div>
-          <div className="menu-icon-btn" onClick={handleShare}>
-            <div className="icon icon-share">{copySuccess ? '✓' : '🔗'}</div>
-            <span className="label">{copySuccess ? 'Copied!' : 'Share'}</span>
-          </div>
-        </div>
-
-        <button className="start-btn" onClick={() => setGameState('PLAYING')}>
-          START
-        </button>
-      </div>
-    </div>
-  ) : (
-    /* Game Screen */
-    <div className="game-container">
-      {/* Game Over Overlay */}
-      {gameEnded && (
-        <div className="game-over-overlay">
-          <div className="game-over-content">
-            <h2 className={gameWon ? 'win-title' : 'lose-title'}>
-              {gameWon ? '🏆 RACE COMPLETE!' : '💥 GAME OVER'}
-            </h2>
-            <div className="final-stats">
-              <div className="stat-item">
-                <span className="stat-label">Score</span>
-                <span className="stat-value">{finalScore}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Progress</span>
-                <span className="stat-value">{Math.round(finalProgress)}%</span>
-              </div>
-              <span className="stat-label">H Gate Uses</span>
-              <span className="stat-value">{data?.hadamard_uses || 0}</span>
-            </div>
-            {gameWon ? (
-              <div className="win-message">🎉 AMAZING RACE! 🎉</div>
-            ) : (
-              <div className="crash-message">💥 CRASHED! 💥</div>
             )}
-            <div className="game-over-btns">
-              <button className="restart-btn" onClick={handleRestart}>🔄 TRY AGAIN</button>
-              <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
+
+            {/* Pause Overlay */}
+            {isPaused && !gameEnded && (
+              <div className="pause-overlay">
+                <div className="pause-content">
+                  <h2>⏸️ PAUSED</h2>
+                  <button className="resume-btn" onClick={handlePause}>▶️ RESUME</button>
+                  <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
+                </div>
+              </div>
+            )}
+
+            {/* Rocket Progress Bar */}
+            <div className="rocket-progress-container">
+              <div className="rocket-track">
+                <div
+                  className="rocket-icon"
+                  style={{ left: `${progress}%` }}
+                >
+                  🚀
+                </div>
+                <div className="planet-icon">🪐</div>
+              </div>
+              <div className="progress-fill-bar" style={{ width: `${progress}%` }}></div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Pause Overlay */}
-      {isPaused && !gameEnded && (
-        <div className="pause-overlay">
-          <div className="pause-content">
-            <h2>⏸️ PAUSED</h2>
-            <button className="resume-btn" onClick={handlePause}>▶️ RESUME</button>
-            <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
-          </div>
-        </div>
-      )}
+            {
+              combo > 1 && (
+                <div className="combo-meter">
+                  <span className="combo-count">{combo}x</span>
+                  <span className="combo-label">QUANTUM STREAK! 🔥</span>
+                </div>
+              )
+            }
 
-      {/* Rocket Progress Bar */}
-      <div className="rocket-progress-container">
-        <div className="rocket-track">
-          <div
-            className="rocket-icon"
-            style={{ left: `${progress}%` }}
-          >
-            🚀
-          </div>
-          <div className="planet-icon">🪐</div>
-        </div>
-        <div className="progress-fill-bar" style={{ width: `${progress}%` }}></div>
-      </div>
+            {/* Danger Hint */}
+            {
+              showDanger && (
+                <div className="danger-hint">
+                  ⚠️ DANGER! PRESS <span className="key-hint">H</span> !
+                </div>
+              )
+            }
 
-      {
-        combo > 1 && (
-          <div className="combo-meter">
-            <span className="combo-count">{combo}x</span>
-            <span className="combo-label">QUANTUM STREAK! 🔥</span>
-          </div>
-        )
-      }
+            {/* Floating Texts */}
+            {
+              floatingTexts.map(ft => (
+                <div
+                  key={ft.id}
+                  className="floating-text"
+                  style={{ left: `${ft.x}%`, top: `${ft.y}%`, color: ft.color }}
+                >
+                  {ft.text}
+                </div>
+              ))
+            }
 
-      {/* Danger Hint */}
-      {
-        showDanger && (
-          <div className="danger-hint">
-            ⚠️ DANGER! PRESS <span className="key-hint">H</span> !
-          </div>
-        )
-      }
+            {/* Pause Button */}
+            {
+              !gameEnded && (
+                <button className="pause-btn" onClick={handlePause}>
+                  {isPaused ? '▶' : '⏸'}
+                </button>
+              )
+            }
 
-      {/* Floating Texts */}
-      {
-        floatingTexts.map(ft => (
-          <div
-            key={ft.id}
-            className="floating-text"
-            style={{ left: `${ft.x}%`, top: `${ft.y}%`, color: ft.color }}
-          >
-            {ft.text}
-          </div>
-        ))
-      }
+            {/* Superposition Indicator */}
+            {
+              inSuperposition && !gameEnded && (
+                <div className="superposition-active">
+                  ⚛️ ENTANGLED STATE
+                </div>
+              )
+            }
 
-      {/* Pause Button */}
-      {
-        !gameEnded && (
-          <button className="pause-btn" onClick={handlePause}>
-            {isPaused ? '▶' : '⏸'}
-          </button>
-        )
-      }
+            {/* Game Area - Two Universes */}
+            <div className={`game-area ${inSuperposition ? 'split' : ''}`}>
+              {/* Universe A */}
+              <div className="pane">
+                <div className="universe-label universe-a">UNIVERSE α</div>
+                <div className="controls-hint">A / D</div>
 
-      {/* Superposition Indicator */}
-      {
-        inSuperposition && !gameEnded && (
-          <div className="superposition-active">
-            ⚛️ ENTANGLED STATE
-          </div>
-        )
-      }
+                <div className="lane-lines">
+                  <div className="lane-line left"></div>
+                  <div className="lane-line center"></div>
+                  <div className="lane-line right"></div>
+                </div>
 
-      {/* Game Area - Two Universes */}
-      <div className={`game-area ${inSuperposition ? 'split' : ''}`}>
-        {/* Universe A */}
-        <div className="pane">
-          <div className="universe-label universe-a">UNIVERSE α</div>
-          <div className="controls-hint">A / D</div>
+                <div className="divider"></div>
 
-          <div className="lane-lines">
-            <div className="lane-line left"></div>
-            <div className="lane-line center"></div>
-            <div className="lane-line right"></div>
-          </div>
+                {/* Universe A Lasers */}
+                {lasers.filter(l => l.universe === 'A').map((laser) => (
+                  <div
+                    key={laser.id}
+                    className="laser"
+                    style={{
+                      top: `${laser.y}%`,
+                      left: laser.lane === 0 ? '5%' : '55%',
+                      width: '40%'
+                    }}
+                  />
+                ))}
 
-          <div className="divider"></div>
+                {/* Universe A Cars - Show BOTH positions in superposition! */}
+                {inSuperposition ? (
+                  <>
+                    {/* Left Ghost Car */}
+                    <div
+                      className="car-container superposition-car"
+                      style={{
+                        left: '25%',
+                        opacity: Math.max(0.2, carA.left_prob)
+                      }}
+                    >
+                      {getCarRender(true, Math.max(0.4, carA.left_prob))}
+                    </div>
 
-          {/* Universe A Lasers */}
-          {lasers.filter(l => l.universe === 'A').map((laser) => (
-            <div
-              key={laser.id}
-              className="laser"
-              style={{
-                top: `${laser.y}%`,
-                left: laser.lane === 0 ? '5%' : '55%',
-                width: '40%'
-              }}
-            />
-          ))}
-
-          {/* Universe A Cars - Show BOTH positions in superposition! */}
-          {inSuperposition ? (
-            <>
-              {/* Left Ghost Car */}
-              opacity: Math.max(0.2, carA.left_prob)
+                    {/* Right Ghost Car */}
+                    <div
+                      className="car-container superposition-car"
+                      style={{
+                        left: '75%',
+                        opacity: Math.max(0.2, carA.right_prob)
+                      }}
+                    >
+                      {getCarRender(true, Math.max(0.4, carA.right_prob))}
+                    </div>
+                  </>
+                ) : (
+                  /* Classical Car A */
+                  <div
+                    className="car-container"
+                    style={{
+                      left: carA.lane === 0 ? '25%' : '75%',
+                      opacity: 1
                     }}
                   >
-              {getCarRender(true, Math.max(0.4, carA.left_prob))}
-            </div>
+                    {getCarRender(false, 1)}
+                  </div>
+                )}
 
-          {/* Right Ghost Car */}
-          <div
-            className="car-container superposition-car"
-            style={{
-              left: '75%',
-              opacity: Math.max(0.2, carA.right_prob)
-            }}
-          >
-            {getCarRender(true, Math.max(0.4, carA.right_prob))}
-          </div>
-        </>
-        ) : (
-        /* Classical Car A */
-        <div
-          className="car-container"
-          style={{
-            left: carA.lane === 0 ? '25%' : '75%',
-            opacity: 1
-          }}
-        >
-          {getCarRender(false, 1)}
-        </div>
-              )}
-
-        {/* Probability Display for Universe A */}
-        {inSuperposition && (
-          <div className="probability-display">
-            <div className={`prob-item prob-left ${data?.prob_A_left > data?.prob_A_right ? 'highlight-prob' : ''}`}>
-              <span className="prob-label">L</span>
-              <span className="prob-value">{data?.prob_A_left || 0}%</span>
-            </div>
-            <div className={`prob-item prob-right ${data?.prob_A_right > data?.prob_A_left ? 'highlight-prob' : ''}`}>
-              <span className="prob-label">R</span>
-              <span className="prob-value">{data?.prob_A_right || 0}%</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Universe B (only visible in superposition) */}
-      {
-        inSuperposition && (
-          <div className="pane">
-            <div className="universe-label universe-b">UNIVERSE β</div>
-            <div className="controls-hint">← / →</div>
-
-            <div className="lane-lines">
-              <div className="lane-line left"></div>
-              <div className="lane-line center"></div>
-              <div className="lane-line right"></div>
-            </div>
-
-            <div className="divider"></div>
-
-            {/* Universe B Lasers */}
-            {lasers.filter(l => l.universe === 'B').map((laser) => (
-              <div
-                key={laser.id}
-                className="laser"
-                style={{
-                  top: `${laser.y}%`,
-                  left: laser.lane === 0 ? '5%' : '55%',
-                  width: '40%'
-                }}
-              />
-            ))}
-
-            {/* Universe B Cars - Show BOTH positions! */}
-            {/* Left Ghost Car B */}
-            <div
-              className="car-container superposition-car"
-              style={{
-                left: '25%',
-                opacity: Math.max(0.2, carB.left_prob)
-              }}
-            >
-              {getCarRender(true, Math.max(0.4, carB.left_prob))}
-            </div>
-
-            {/* Right Ghost Car B */}
-            <div
-              className="car-container superposition-car"
-              style={{
-                left: '75%',
-                opacity: Math.max(0.2, carB.right_prob)
-              }}
-            >
-              {getCarRender(true, Math.max(0.4, carB.right_prob))}
-            </div>
-
-            {/* Probability Display for Universe B */}
-            <div className="probability-display">
-              <div className={`prob-item prob-left ${data?.prob_B_left > data?.prob_B_right ? 'highlight-prob' : ''}`}>
-                <span className="prob-label">L</span>
-                <span className="prob-value">{data?.prob_B_left || 0}%</span>
+                {/* Probability Display for Universe A */}
+                {inSuperposition && (
+                  <div className="probability-display">
+                    <div className={`prob-item prob-left ${data?.prob_A_left > data?.prob_A_right ? 'highlight-prob' : ''}`}>
+                      <span className="prob-label">L</span>
+                      <span className="prob-value">{data?.prob_A_left || 0}%</span>
+                    </div>
+                    <div className={`prob-item prob-right ${data?.prob_A_right > data?.prob_A_left ? 'highlight-prob' : ''}`}>
+                      <span className="prob-label">R</span>
+                      <span className="prob-value">{data?.prob_A_right || 0}%</span>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className={`prob-item prob-right ${data?.prob_B_right > data?.prob_B_left ? 'highlight-prob' : ''}`}>
-                <span className="prob-label">R</span>
-                <span className="prob-value">{data?.prob_B_right || 0}%</span>
-              </div>
+
+              {/* Universe B (only visible in superposition) */}
+              {
+                inSuperposition && (
+                  <div className="pane">
+                    <div className="universe-label universe-b">UNIVERSE β</div>
+                    <div className="controls-hint">← / →</div>
+
+                    <div className="lane-lines">
+                      <div className="lane-line left"></div>
+                      <div className="lane-line center"></div>
+                      <div className="lane-line right"></div>
+                    </div>
+
+                    <div className="divider"></div>
+
+                    {/* Universe B Lasers */}
+                    {lasers.filter(l => l.universe === 'B').map((laser) => (
+                      <div
+                        key={laser.id}
+                        className="laser"
+                        style={{
+                          top: `${laser.y}%`,
+                          left: laser.lane === 0 ? '5%' : '55%',
+                          width: '40%'
+                        }}
+                      />
+                    ))}
+
+                    {/* Universe B Cars - Show BOTH positions! */}
+                    {/* Left Ghost Car B */}
+                    <div
+                      className="car-container superposition-car"
+                      style={{
+                        left: '25%',
+                        opacity: Math.max(0.2, carB.left_prob)
+                      }}
+                    >
+                      {getCarRender(true, Math.max(0.4, carB.left_prob))}
+                    </div>
+
+                    {/* Right Ghost Car B */}
+                    <div
+                      className="car-container superposition-car"
+                      style={{
+                        left: '75%',
+                        opacity: Math.max(0.2, carB.right_prob)
+                      }}
+                    >
+                      {getCarRender(true, Math.max(0.4, carB.right_prob))}
+                    </div>
+
+                    {/* Probability Display for Universe B */}
+                    <div className="probability-display">
+                      <div className={`prob-item prob-left ${data?.prob_B_left > data?.prob_B_right ? 'highlight-prob' : ''}`}>
+                        <span className="prob-label">L</span>
+                        <span className="prob-value">{data?.prob_B_left || 0}%</span>
+                      </div>
+                      <div className={`prob-item prob-right ${data?.prob_B_right > data?.prob_B_left ? 'highlight-prob' : ''}`}>
+                        <span className="prob-label">R</span>
+                        <span className="prob-value">{data?.prob_B_right || 0}%</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
             </div>
+
+            {/* Score HUD */}
+            < div className="score-hud" > SCORE: {data?.score || 0}</div >
+
+            {/* Controls HUD */}
+            {
+              !gameEnded && (
+                <div className="controls-hud">
+                  <div className="control-key"><span>H</span> Superposition</div>
+                  <div className="control-key"><span>L</span> Move Laser</div>
+                  <div className="control-key"><span>A/D</span> Universe α</div>
+                  {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
+                </div>
+              )
+            }
+
+            {/* Mobile Touch Controls */}
+            {
+              !gameEnded && (
+                <div className="mobile-controls">
+                  <button
+                    className={`mobile-btn hadamard-btn ${inSuperposition ? 'active' : ''}`}
+                    onClick={handleHadamard}
+                  >
+                    H
+                    <span className="btn-label">Superposition</span>
+                  </button>
+
+                  <div className="swap-controls">
+                    <button
+                      className="mobile-btn swap-btn"
+                      onClick={handlePauliA}
+                    >
+                      ⟷
+                      <span className="btn-label">SWAP</span>
+                    </button>
+                    <button
+                      className="mobile-btn laser-btn"
+                      onClick={handleLaserSwitch}
+                    >
+                      ⚡
+                      <span className="btn-label">LASER</span>
+                    </button>
+                  </div>
+                </div>
+              )
+            }
           </div>
         )
       }
-    </div>
-
-  {/* Score HUD */ }
-  < div className="score-hud" > SCORE: {data?.score || 0}</div >
-
-  {/* Controls HUD */ }
-  {
-    !gameEnded && (
-      <div className="controls-hud">
-        <div className="control-key"><span>H</span> Superposition</div>
-        <div className="control-key"><span>L</span> Move Laser</div>
-        <div className="control-key"><span>A/D</span> Universe α</div>
-        {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
-      </div>
-    )
-  }
-
-  {/* Mobile Touch Controls */ }
-  {
-    !gameEnded && (
-      <div className="mobile-controls">
-        <button
-          className={`mobile-btn hadamard-btn ${inSuperposition ? 'active' : ''}`}
-          onClick={handleHadamard}
-        >
-          H
-          <span className="btn-label">Superposition</span>
-        </button>
-
-        <div className="swap-controls">
-          <button
-            className="mobile-btn swap-btn"
-            onClick={handlePauliA}
-          >
-            ⟷
-            <span className="btn-label">SWAP</span>
-          </button>
-          <button
-            className="mobile-btn laser-btn"
-            onClick={handleLaserSwitch}
-          >
-            ⚡
-            <span className="btn-label">LASER</span>
-          </button>
-        </div>
-      </div>
-    )
-  }
-      </div >
-    )
-}
     </div >
   );
 }

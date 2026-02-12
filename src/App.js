@@ -159,6 +159,10 @@ function App() {
       else if (key === 'p' || key === 'escape') {
         wsRef.current.send(JSON.stringify({ action: 'pause' }));
       }
+      // L = Switch Laser Universe
+      else if (key === 'l') {
+        wsRef.current.send(JSON.stringify({ action: 'laser_switch' }));
+      }
     };
 
     window.addEventListener('keydown', handleKey);
@@ -225,6 +229,12 @@ function App() {
     }
   };
 
+  const handleLaserSwitch = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
+      wsRef.current.send(JSON.stringify({ action: 'laser_switch' }));
+    }
+  };
+
   const getCarColorClass = () => {
     const colorMap = {
       'red': 'red-car',
@@ -282,6 +292,13 @@ function App() {
                   <div className="control-info">
                     <span className="control-title">Universe β Control</span>
                     <span className="control-desc">In quantum mode, control your second universe's car independently!</span>
+                  </div>
+                </div>
+                <div className="control-item">
+                  <span className="key-badge">L</span>
+                  <div className="control-info">
+                    <span className="control-title">Switch Laser</span>
+                    <span className="control-desc">Move the incoming laser to the other universe! (Tactical choice)</span>
                   </div>
                 </div>
                 <div className="control-item">
@@ -672,6 +689,7 @@ function App() {
           {!gameEnded && (
             <div className="controls-hud">
               <div className="control-key"><span>H</span> Superposition</div>
+              <div className="control-key"><span>L</span> Move Laser</div>
               <div className="control-key"><span>A/D</span> Universe α</div>
               {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
             </div>
@@ -695,6 +713,13 @@ function App() {
                 >
                   ⟷
                   <span className="btn-label">SWAP</span>
+                </button>
+                <button
+                  className="mobile-btn laser-btn"
+                  onClick={handleLaserSwitch}
+                >
+                  ⚡
+                  <span className="btn-label">LASER</span>
                 </button>
               </div>
             </div>

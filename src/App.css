@@ -1593,6 +1593,7 @@ body {
 }
 
 /* ===== PROBABILITY DISPLAY ===== */
+/* ===== PROBABILITY DISPLAY ===== */
 .probability-display {
   position: absolute;
   bottom: 12%;
@@ -1606,15 +1607,15 @@ body {
 }
 
 .prob-item {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(76, 175, 80, 0.5);
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid rgba(76, 175, 80, 0.8);
+  padding: 8px 12px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 45px;
-  backdrop-filter: blur(4px);
+  min-width: 60px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 .prob-item.prob-left {
@@ -1628,17 +1629,18 @@ body {
 }
 
 .prob-label {
-  font-size: 0.6rem;
-  color: #aaa;
+  font-size: 0.9rem;
+  color: #ddd;
   font-weight: bold;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .prob-value {
-  font-size: 0.75rem;
+  font-size: 1.4rem;
   color: #fff;
-  font-family: 'Orbitron', monospace;
+  font-family: 'Russo One', sans-serif;
   font-weight: 700;
+  text-shadow: 1px 1px 0 #000;
 }
 
 /* Adjust car position to make room for stats */

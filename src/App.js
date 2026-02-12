@@ -468,7 +468,7 @@ function App() {
           </div>
           <button className="modal-btn" onClick={() => setShowSettingsModal(false)}>Save</button>
         </div>
-        </div>
+      </div>
   )
 }
 
@@ -561,6 +561,15 @@ function App() {
               <span className="stat-label">H Gate Uses</span>
               <span className="stat-value">{data?.hadamard_uses || 0}</span>
             </div>
+            {gameWon ? (
+              <div className="win-message">🎉 AMAZING RACE! 🎉</div>
+            ) : (
+              <div className="crash-message">💥 CRASHED! 💥</div>
+            )}
+            <div className="game-over-btns">
+              <button className="restart-btn" onClick={handleRestart}>🔄 TRY AGAIN</button>
+              <button className="menu-btn" onClick={handleBackToMenu}>🏠 MENU</button>
+            </div>
           </div>
         </div>
       )}
@@ -590,7 +599,6 @@ function App() {
         <div className="progress-fill-bar" style={{ width: `${progress}%` }}></div>
       </div>
 
-      {/* Combo Meter */}
       {
         combo > 1 && (
           <div className="combo-meter">

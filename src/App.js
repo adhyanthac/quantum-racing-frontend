@@ -6,11 +6,69 @@ const GAME_URL = 'https://quantum-racing.vercel.app';
 const DEFAULT_SETTINGS = {
   playerName: 'Quantum Racer',
   carColor: 'red',
-  avatar: '🏎️',
+  avatar: 'kart',
   gameSpeed: 'normal',
 };
 
-const AVATARS = ['🏎️', '🚀', '🛸', '🐱', '🦄', '🚓', '🏍️', '👾'];
+const AVATARS = [
+  '#FF0000', // Red
+  '#0000FF', // Blue
+  '#00FF00', // Green
+  '#FFFF00', // Yellow
+  '#800080', // Purple
+  '#FFC0CB', // Pink
+  '#00FFFF', // Cyan
+  '#FFA500'  // Orange
+];
+
+const NeonKart = ({ color }) => (
+  <svg viewBox="0 0 100 100" className="neon-kart" style={{ filter: `drop-shadow(0 0 8px ${color})` }}>
+    <defs>
+      <filter id={`glow-${color}`} x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+        <feMerge>
+          <feMergeNode in="coloredBlur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    {/* Kart Base/Body - Front Wing */}
+    <path d="M20,20 L80,20 L75,30 L25,30 Z"
+      fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+    {/* Wheels - Front */}
+    <rect x="10" y="15" width="10" height="20" rx="3"
+      fill="none" stroke={color} strokeWidth="3" />
+    <rect x="80" y="15" width="10" height="20" rx="3"
+      fill="none" stroke={color} strokeWidth="3" />
+
+    {/* Main Body Shape */}
+    <path d="M35,30 L65,30 L70,60 L30,60 Z"
+      fill="none" stroke={color} strokeWidth="3" />
+
+    {/* Driver Head/Helmet - Circle */}
+    <circle cx="50" cy="50" r="10"
+      fill="none" stroke={color} strokeWidth="3" />
+
+    {/* Spoiler/Rear Wing */}
+    <path d="M25,85 L75,85 L80,75 L20,75 Z"
+      fill="none" stroke={color} strokeWidth="3" />
+
+    {/* Wheels - Rear */}
+    <rect x="5" y="65" width="15" height="25" rx="4"
+      fill="none" stroke={color} strokeWidth="3" />
+    <rect x="80" y="65" width="15" height="25" rx="4"
+      fill="none" stroke={color} strokeWidth="3" />
+
+    {/* Engine/Exhaust Pipes */}
+    <line x1="40" y1="85" x2="40" y2="95" stroke={color} strokeWidth="2" />
+    <line x1="60" y1="85" x2="60" y2="95" stroke={color} strokeWidth="2" />
+
+    {/* Energy Trail Effect (Simulated in SVG) */}
+    <path d="M42,95 L38,105 M58,95 L62,105" stroke={color} strokeWidth="1" opacity="0.6" />
+  </svg>
+);
 
 const FLOATING_MESSAGES = ['NICE!', 'WOOSH!', 'DODGE!', 'SICK!', 'RADICAL!'];
 const QUANTUM_MESSAGES = ['QUANTUM TUNNEL!', 'SUPERPOSITION!', 'ENTANGLED!', 'PURE MATH!', 'GHOST MODE!'];
@@ -290,7 +348,7 @@ function App() {
         className={`car-avatar ${isGhost ? 'ghost-effect' : ''} trail-${settings.carColor}`}
         style={{ opacity }}
       >
-        {settings.avatar}
+        <NeonKart color={settings.carColor === 'default' ? '#00FFFF' : settings.carColor} />
       </div>
     );
   };
@@ -427,13 +485,14 @@ function App() {
             <div className="setting-item">
               <label className="setting-label">Choose Your Racer</label>
               <div className="avatar-options">
-                {AVATARS.map(avatar => (
+                {AVATARS.map(color => (
                   <button
-                    key={avatar}
-                    className={`avatar-btn ${settings.avatar === avatar ? 'selected' : ''}`}
-                    onClick={() => saveSettings({ ...settings, avatar })}
+                    key={color}
+                    className={`avatar-btn ${settings.carColor === color ? 'selected' : ''}`}
+                    onClick={() => saveSettings({ ...settings, carColor: color, avatar: 'kart' })}
+                    style={{ borderColor: color }}
                   >
-                    {avatar}
+                    <NeonKart color={color} />
                   </button>
                 ))}
               </div>
@@ -504,14 +563,14 @@ function App() {
           <div className="menu-screen">
             <div className="menu-bg">
               <img
-                src="https://4kwallpapers.com/images/wallpapers/f1-cars-race-track-2880x1800-13489.jpg"
-                alt="F1 Night Race"
-                onError={(e) => { e.target.style.display = 'none'; }}
+                src="https://images.unsplash.com/photo-1635331735953-b2582877e8be?q=80&w=2070&auto=format&fit=crop"
+                alt="Mario Kart Style Track"
+                className="menu-bg-img"
               />
               <div className="menu-bg-overlay"></div>
             </div>
 
-            <h1 className="title">QUANTUM RACING</h1>
+            <h1 className="title">QUANTUM MARIO KART 🏎️</h1>
 
             <div className="bottom-menu">
               <div className="menu-icons">
@@ -557,8 +616,10 @@ function App() {
                       <span className="stat-label">Progress</span>
                       <span className="stat-value">{Math.round(finalProgress)}%</span>
                     </div>
-                    <span className="stat-label">H Gate Uses</span>
-                    <span className="stat-value">{data?.hadamard_uses || 0}</span>
+                    <div className="stat-item">
+                      <span className="stat-label">H Gate Uses</span>
+                      <span className="stat-value">{data?.hadamard_uses || 0}</span>
+                    </div>
                   </div>
                   {gameWon ? (
                     <div className="win-message">🎉 AMAZING RACE! 🎉</div>

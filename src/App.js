@@ -169,7 +169,7 @@ function App() {
         ws.close();
       }
     };
-  }, [gameState, clientId, saveScoreToStorage]);
+  }, [gameState, clientId, saveScoreToStorage, combo]);
 
   // Keyboard controls
   useEffect(() => {

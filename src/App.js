@@ -339,11 +339,19 @@ function App() {
   };
 
   const addFloatingText = (text, color) => {
+    // Spawn on the right side, tilted
     const id = Date.now();
-    setFloatingTexts(prev => [...prev, { id, text, color, x: 50 + (Math.random() * 20 - 10), y: 40 }]);
+    setFloatingTexts(prev => [...prev, {
+      id,
+      text,
+      color,
+      x: 75 + (Math.random() * 10), // Right side (75-85%)
+      y: 20 + (Math.random() * 40), // Middle-ish vertical (20-60%)
+      rotation: -10 + (Math.random() * 20) // Random tilt
+    }]);
     setTimeout(() => {
       setFloatingTexts(prev => prev.filter(t => t.id !== id));
-    }, 1000);
+    }, 1500);
   };
 
   const getCarRender = (isGhost = false, opacity = 1) => {
@@ -650,8 +658,8 @@ function App() {
               </div>
             )}
 
-            {/* Rocket Progress Bar */}
-            <div className="rocket-progress-container">
+            {/* Rocket Progress Bar - Moved to Bottom */}
+            <div className="rocket-progress-container" style={{ top: 'auto', bottom: '30px' }}>
               <div className="rocket-track">
                 <div
                   className="rocket-icon"
@@ -681,7 +689,12 @@ function App() {
                 <div
                   key={ft.id}
                   className="floating-text"
-                  style={{ left: `${ft.x}%`, top: `${ft.y}%`, color: ft.color }}
+                  style={{
+                    left: `${ft.x}%`,
+                    top: `${ft.y}%`,
+                    color: ft.color,
+                    transform: `rotate(${ft.rotation || -10}deg)`
+                  }}
                 >
                   {ft.text}
                 </div>

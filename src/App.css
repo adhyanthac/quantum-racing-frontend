@@ -2043,13 +2043,19 @@ body {
   /* Rocket Progress Bar - Improved */
   .rocket-progress-container {
     position: absolute;
-    top: 30px;
+    /* Moved to bottom via inline style in JS, but default here */
     left: 50%;
     transform: translateX(-50%);
-    width: 70%;
-    max-width: 800px;
-    height: 30px;
-    z-index: 100;
+    width: 80%;
+    max-width: 600px;
+    height: 40px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    padding: 0 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   }
 
   .rocket-track {
@@ -2167,39 +2173,38 @@ body {
   }
 
   /* Floating Text */
-  /* Floating Text - Tilted */
+  /* Floating Text - Tilted Side Pop */
   .floating-text {
     position: absolute;
-    /* Reduced font size slightly so it's not overwhelming, but still big */
     font-family: 'Russo One', sans-serif;
-    font-size: 3.5rem;
-    text-shadow: 4px 4px 0 #000;
+    font-size: 2.5rem;
+    text-shadow: 3px 3px 0 #000;
     pointer-events: none;
     z-index: 200;
-    /* Increased rotation */
-    animation: float-tilt-fade 0.8s forwards;
+    animation: side-float-pop 1.5s forwards;
     white-space: nowrap;
-    transform-origin: center;
+    text-transform: uppercase;
+    font-style: italic;
   }
 
-  @keyframes float-tilt-fade {
+  @keyframes side-float-pop {
     0% {
-      transform: translate(-50%, 0) scale(0.5) rotate(-15deg);
       opacity: 0;
+      transform: scale(0.5) translateX(50px) rotate(-15deg);
     }
 
-    20% {
-      transform: translate(-50%, -40px) scale(1.3) rotate(5deg);
+    15% {
       opacity: 1;
+      transform: scale(1.2) translateX(0) rotate(-5deg);
     }
 
-    80% {
-      opacity: 1;
+    30% {
+      transform: scale(1) translateX(0) rotate(-5deg);
     }
 
     100% {
-      transform: translate(-50%, -150px) scale(0.8) rotate(-10deg);
       opacity: 0;
+      transform: scale(0.9) translate(-20px, -30px) rotate(-10deg);
     }
   }
 
@@ -2586,4 +2591,55 @@ body {
 
 .trail-purple {
   filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #aa00ff) drop-shadow(0 0 40px #aa00ff);
+}
+
+/* ===== OVERRIDES & FIXES ===== */
+
+/* Rocket Progress Bar - Override */
+.rocket-progress-container {
+  /* top handled by JS inline style */
+  /* bottom handled by JS inline style */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 80% !important;
+  max-width: 600px !important;
+  height: 40px !important;
+  z-index: 1000 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 20px !important;
+  padding: 0 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Floating Text - Override */
+.floating-text {
+  animation: side-float-pop 1.5s forwards !important;
+  transform-origin: center !important;
+  text-align: right;
+  right: 0;
+  left: auto !important;
+  /* Force use of right/left */
+}
+
+@keyframes side-float-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateX(50px) rotate(-15deg);
+  }
+
+  15% {
+    opacity: 1;
+    transform: scale(1.2) translateX(0) rotate(-5deg);
+  }
+
+  30% {
+    transform: scale(1) translateX(0) rotate(-5deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translate(-20px, -30px) rotate(-10deg);
+  }
 }

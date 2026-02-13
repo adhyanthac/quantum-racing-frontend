@@ -23,55 +23,54 @@ const AVATARS = [
 
 const NeonKart = ({ color }) => (
   <svg viewBox="0 0 100 100" className="neon-kart" style={{
-    filter: `drop-shadow(0 0 8px ${color})`,
     width: '100%',
     height: '100%',
-    overflow: 'visible'
+    overflow: 'visible',
+    filter: 'drop-shadow(0 4px 4px rgba(0,0,0,0.5))'
   }}>
     <defs>
-      <filter id={`glow-${color}`} x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-        <feMerge>
-          <feMergeNode in="coloredBlur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
+      <linearGradient id={`bodyGrad-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor={color} stopOpacity="1" />
+        <stop offset="100%" stopColor={color} stopOpacity="0.6" />
+      </linearGradient>
     </defs>
 
-    {/* Kart Base/Body - Front Wing */}
-    <path d="M20,20 L80,20 L75,30 L25,30 Z"
-      fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    {/* Wheels - Rear (Dark rubber) */}
+    <rect x="5" y="65" width="18" height="25" rx="5"
+      fill="#222" stroke="#111" strokeWidth="2" />
+    <rect x="77" y="65" width="18" height="25" rx="5"
+      fill="#222" stroke="#111" strokeWidth="2" />
+
+    {/* Exhaust Pipes */}
+    <path d="M35,85 L35,95 Q40,95 45,95 L45,85" fill="#555" />
+    <path d="M55,85 L55,95 Q60,95 65,95 L65,85" fill="#555" />
+
+    {/* Main Body - Solid Color */}
+    <path d="M30,30 L70,30 L80,60 L85,75 L15,75 L20,60 Z"
+      fill={color} stroke="#eee" strokeWidth="1" />
+
+    {/* Front Wing */}
+    <path d="M15,25 L85,25 L80,35 L20,35 Z"
+      fill={color} stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
 
     {/* Wheels - Front */}
-    <rect x="10" y="15" width="10" height="20" rx="3"
-      fill="none" stroke={color} strokeWidth="3" />
-    <rect x="80" y="15" width="10" height="20" rx="3"
-      fill="none" stroke={color} strokeWidth="3" />
+    <rect x="8" y="20" width="12" height="20" rx="4"
+      fill="#222" stroke="#111" strokeWidth="2" />
+    <rect x="80" y="20" width="12" height="20" rx="4"
+      fill="#222" stroke="#111" strokeWidth="2" />
 
-    {/* Main Body Shape */}
-    <path d="M35,30 L65,30 L70,60 L30,60 Z"
-      fill="none" stroke={color} strokeWidth="3" />
-
-    {/* Driver Head/Helmet - Circle */}
-    <circle cx="50" cy="50" r="10"
-      fill="none" stroke={color} strokeWidth="3" />
+    {/* Driver Helmet */}
+    <circle cx="50" cy="50" r="11" fill="white" stroke="#333" strokeWidth="2" />
+    {/* Visor */}
+    <path d="M42,48 Q50,45 58,48 L58,52 Q50,55 42,52 Z" fill="#222" />
 
     {/* Spoiler/Rear Wing */}
-    <path d="M25,85 L75,85 L80,75 L20,75 Z"
-      fill="none" stroke={color} strokeWidth="3" />
+    <path d="M20,85 L80,85 L85,78 L15,78 Z"
+      fill={color} stroke="#fff" strokeWidth="1" />
 
-    {/* Wheels - Rear */}
-    <rect x="5" y="65" width="15" height="25" rx="4"
-      fill="none" stroke={color} strokeWidth="3" />
-    <rect x="80" y="65" width="15" height="25" rx="4"
-      fill="none" stroke={color} strokeWidth="3" />
-
-    {/* Engine/Exhaust Pipes */}
-    <line x1="40" y1="85" x2="40" y2="95" stroke={color} strokeWidth="2" />
-    <line x1="60" y1="85" x2="60" y2="95" stroke={color} strokeWidth="2" />
-
-    {/* Energy Trail Effect (Simulated in SVG) */}
-    <path d="M42,95 L38,105 M58,95 L62,105" stroke={color} strokeWidth="1" opacity="0.6" />
+    {/* Subtle Engine Glow (Instead of massive trail) */}
+    <path d="M38,96 L42,96 L40,105 Z" fill="#00FFFF" opacity="0.8" />
+    <path d="M58,96 L62,96 L60,105 Z" fill="#00FFFF" opacity="0.8" />
   </svg>
 );
 
@@ -568,8 +567,8 @@ function App() {
           <div className="menu-screen">
             <div className="menu-bg">
               <img
-                src="https://images.unsplash.com/photo-1547721064-da6cfb341d50?q=80&w=2070&auto=format&fit=crop"
-                alt="Mario Kart Style Track"
+                src="https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_2.0/c_scale,w_1600/ncom/en_US/games/switch/m/mario-kart-8-deluxe-switch/hero"
+                alt="Mario Kart 8 Deluxe Background"
                 className="menu-bg-img"
                 style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: -1 }}
               />

@@ -867,8 +867,7 @@ function App() {
               }
             </div>
 
-            {/* Score HUD */}
-            < div className="score-hud" > SCORE: {data?.score || 0}</div >
+
 
             {/* Controls HUD */}
             {

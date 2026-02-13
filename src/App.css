@@ -2618,9 +2618,11 @@ body {
   animation: side-float-pop 1.5s forwards !important;
   transform-origin: center !important;
   text-align: right;
-  right: 0;
+  right: 5% !important;
+  /* Fixed distance from right edge */
   left: auto !important;
-  /* Force use of right/left */
+  top: 30% !important;
+  /* Hardcoded vertical position range via JS, but let's base it here */
 }
 
 @keyframes side-float-pop {

@@ -22,7 +22,12 @@ const AVATARS = [
 ];
 
 const NeonKart = ({ color }) => (
-  <svg viewBox="0 0 100 100" className="neon-kart" style={{ filter: `drop-shadow(0 0 8px ${color})` }}>
+  <svg viewBox="0 0 100 100" className="neon-kart" style={{
+    filter: `drop-shadow(0 0 8px ${color})`,
+    width: '100%',
+    height: '100%',
+    overflow: 'visible'
+  }}>
     <defs>
       <filter id={`glow-${color}`} x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -346,7 +351,7 @@ function App() {
     return (
       <div
         className={`car-avatar ${isGhost ? 'ghost-effect' : ''} trail-${settings.carColor}`}
-        style={{ opacity }}
+        style={{ opacity, width: '100%', height: '100%' }}
       >
         <NeonKart color={settings.carColor === 'default' ? '#00FFFF' : settings.carColor} />
       </div>
@@ -563,9 +568,10 @@ function App() {
           <div className="menu-screen">
             <div className="menu-bg">
               <img
-                src="https://images.unsplash.com/photo-1635331735953-b2582877e8be?q=80&w=2070&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1547721064-da6cfb341d50?q=80&w=2070&auto=format&fit=crop"
                 alt="Mario Kart Style Track"
                 className="menu-bg-img"
+                style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: -1 }}
               />
               <div className="menu-bg-overlay"></div>
             </div>

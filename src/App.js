@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import './App.css';
 
 const GAME_URL = 'https://quantum-racing.vercel.app';
@@ -837,7 +838,8 @@ function App() {
           </div>
         )
       }
-    </div >
+      <Analytics />
+    </div>
   );
 }
 

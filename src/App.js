@@ -287,7 +287,7 @@ function App() {
   const getCarRender = (isGhost = false, opacity = 1) => {
     return (
       <div
-        className={`car-avatar ${isGhost ? 'ghost-effect' : ''}`}
+        className={`car-avatar ${isGhost ? 'ghost-effect' : ''} trail-${settings.carColor}`}
         style={{ opacity }}
       >
         {settings.avatar}

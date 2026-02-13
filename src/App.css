@@ -2534,3 +2534,33 @@ body {
     height: 55px;
   }
 }
+
+/* ===== FORCE AVATAR BUTTON SIZE ===== */
+.avatar-btn {
+  width: 70px !important;
+  height: 70px !important;
+  font-size: 2.5rem !important;
+  margin: 5px;
+}
+
+/* ===== CAR TRAIL GLOWS ===== */
+/* These map to: red, blue, green, yellow, purple */
+.trail-red {
+  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+}
+
+.trail-blue {
+  filter: drop-shadow(0 0 15px rgba(0, 0, 255, 0.8));
+}
+
+.trail-green {
+  filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.8));
+}
+
+.trail-yellow {
+  filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.8));
+}
+
+.trail-purple {
+  filter: drop-shadow(0 0 15px rgba(128, 0, 128, 0.8));
+}

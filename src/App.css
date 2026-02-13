@@ -24,6 +24,34 @@ body {
   overflow: hidden;
 }
 
+/* Rainbow Road Animated Background */
+@keyframes rainbow-road {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.game-area {
+  background: linear-gradient(90deg,
+      rgba(255, 0, 0, 0.1),
+      rgba(255, 127, 0, 0.1),
+      rgba(255, 255, 0, 0.1),
+      rgba(0, 255, 0, 0.1),
+      rgba(0, 0, 255, 0.1),
+      rgba(75, 0, 130, 0.1),
+      rgba(148, 0, 211, 0.1));
+  background-size: 200% 200%;
+  animation: rainbow-road 10s ease infinite;
+}
+
 /* ===== MENU SCREEN ===== */
 .menu-screen {
   height: 100vh;
@@ -2005,24 +2033,25 @@ body {
 
   /* ===== NEW UI FEATURES ===== */
 
-  /* Rocket Progress Bar */
+  /* Rocket Progress Bar - Improved */
   .rocket-progress-container {
     position: absolute;
-    top: 70px;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
-    max-width: 600px;
-    height: 40px;
+    width: 70%;
+    max-width: 800px;
+    height: 30px;
     z-index: 100;
   }
 
   .rocket-track {
     position: relative;
     width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -2031,18 +2060,19 @@ body {
     position: absolute;
     top: 50%;
     left: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #ff9800, #ff5722);
+    height: 100%;
+    background: linear-gradient(90deg, #ff9800, #ff5722, #f44336);
     border-radius: 3px;
     transform: translateY(-50%);
     transition: width 0.1s linear;
+    box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
   }
 
   .rocket-icon {
     position: absolute;
-    top: -15px;
+    top: -20px;
     /* Adjust to center vertically on track */
-    font-size: 1.8rem;
+    font-size: 2.5rem;
     transform: translateX(-50%) rotate(45deg);
     /* Point rocket forward */
     transition: left 0.1s linear;
@@ -2059,73 +2089,107 @@ body {
   }
 
   /* Combo Meter */
+  /* Combo Meter - Tilted and Flashy */
   .combo-meter {
     position: absolute;
-    top: 100px;
-    left: 20px;
+    top: 150px;
+    right: 20px;
+    left: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    transform: rotate(-5deg);
-    animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    align-items: flex-end;
+    transform: rotate(-10deg);
+    animation: combo-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fade-out 2s forwards 0.5s;
     z-index: 100;
+    pointer-events: none;
   }
 
   .combo-count {
     font-family: 'Russo One', sans-serif;
-    font-size: 3.5rem;
+    font-size: 5rem;
     color: #ffeb3b;
     text-shadow:
-      3px 3px 0 #ff5722,
-      -1px -1px 0 #fff;
-    line-height: 1;
+      4px 4px 0 #ff5722,
+      -2px -2px 0 #ffffff;
+    line-height: 0.9;
+    background: linear-gradient(to bottom, #fff700, #ff9100);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.8));
   }
 
   .combo-label {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     color: #fff;
     background: #ff5722;
-    padding: 2px 8px;
-    border-radius: 4px;
-    transform: skewX(-10deg);
+    padding: 5px 15px;
+    border-radius: 8px;
+    transform: skewX(-15deg);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   }
 
-  @keyframes pop-in {
-    from {
-      transform: scale(0) rotate(-45deg);
-    }
-
-    to {
-      transform: scale(1) rotate(-5deg);
-    }
-  }
-
-  /* Floating Text */
-  .floating-text {
-    position: absolute;
-    font-family: 'Russo One', sans-serif;
-    font-size: 2rem;
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    z-index: 200;
-    animation: float-up-fade 1s forwards;
-    white-space: nowrap;
-  }
-
-  @keyframes float-up-fade {
+  @keyframes combo-pop {
     0% {
-      transform: translate(-50%, 0) scale(0.5);
+      transform: scale(0) rotate(-45deg);
       opacity: 0;
     }
 
-    20% {
-      transform: translate(-50%, -20px) scale(1.2);
+    60% {
+      transform: scale(1.2) rotate(-5deg);
       opacity: 1;
     }
 
     100% {
-      transform: translate(-50%, -100px) scale(1);
+      transform: scale(1) rotate(-10deg);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+      transform: scale(1) rotate(-10deg);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0.8) rotate(-10deg) translateY(-50px);
+    }
+  }
+
+  /* Floating Text */
+  /* Floating Text - Tilted */
+  .floating-text {
+    position: absolute;
+    font-family: 'Russo One', sans-serif;
+    font-size: 2.5rem;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 200;
+    animation: float-tilt-fade 0.8s forwards;
+    white-space: nowrap;
+    transform-origin: center;
+  }
+
+  @keyframes float-tilt-fade {
+    0% {
+      transform: translate(-50%, 0) scale(0.5) rotate(-10deg);
+      opacity: 0;
+    }
+
+    20% {
+      transform: translate(-50%, -30px) scale(1.2) rotate(5deg);
+      opacity: 1;
+    }
+
+    80% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translate(-50%, -120px) scale(0.8) rotate(-5deg);
       opacity: 0;
     }
   }
@@ -2172,19 +2236,52 @@ body {
   }
 
   /* Car Avatar Styles */
+  /* Car Avatar Styles - Bigger! */
   .car-avatar {
-    font-size: 3rem;
-    /* Emojis are text, size them up */
+    font-size: 5rem;
+    /* MUCH BIGGER */
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
-    transition: transform 0.1s;
+    filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.5));
+    transition: transform 0.1s, opacity 0.2s;
   }
 
+  /* Glitch Effect - Stronger */
   .car-avatar.ghost-effect {
-    opacity: 0.7;
-    animation: glitch 0.2s infinite;
+    opacity: 0.8;
+    animation: glitch-strong 0.15s infinite;
+    filter: hue-rotate(90deg) drop-shadow(0 0 10px #00e676);
+  }
+
+  @keyframes glitch-strong {
+    0% {
+      transform: translate(0) skew(0);
+    }
+
+    20% {
+      transform: translate(-4px, 4px) skew(-5deg);
+      opacity: 0.9;
+    }
+
+    40% {
+      transform: translate(4px, -4px) skew(5deg);
+      opacity: 0.6;
+    }
+
+    60% {
+      transform: translate(-2px, 2px) skew(-2deg);
+      opacity: 1;
+    }
+
+    80% {
+      transform: translate(2px, -2px) skew(2deg);
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: translate(0) skew(0);
+    }
   }
 
   @keyframes glitch {
@@ -2333,14 +2430,33 @@ body {
     top: 50px;
   }
 
-  /* Pause button */
+  /* Pause button - Bottom Left */
   .pause-btn {
-    top: 15px;
-    right: 15px;
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    top: auto;
+    right: auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 900;
+    transition: all 0.2s;
   }
+
+  .pause-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+  }
+
 
   /* Superposition indicator */
   .superposition-active {

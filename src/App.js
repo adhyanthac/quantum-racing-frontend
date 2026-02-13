@@ -34,7 +34,7 @@ function App() {
   // New "Juice" States
   const [floatingTexts, setFloatingTexts] = useState([]);
   const [combo, setCombo] = useState(0);
-  const [showDanger, setShowDanger] = useState(false);
+
 
   const wsRef = useRef(null);
   const gameEndedRef = useRef(false);
@@ -120,26 +120,27 @@ function App() {
         // Detect Laser Pass (Scored point/survived)
         if (gameData.lasers_passed > prevLasersPassedRef.current) {
           const isQuantum = gameData.in_superposition;
-          const texts = isQuantum ? QUANTUM_MESSAGES : FLOATING_MESSAGES;
-          const text = texts[Math.floor(Math.random() * texts.length)];
 
-          addFloatingText(text, isQuantum ? 'gold' : 'white');
-          setCombo(prev => prev + 1);
+          if (isQuantum) {
+            // ONLY increment combo in Quantum Mode
+            const texts = QUANTUM_MESSAGES;
+            const text = texts[Math.floor(Math.random() * texts.length)];
+            addFloatingText(text, 'gold');
+            setCombo(prev => prev + 1);
+          } else {
+            // Reset combo if passing classically
+            if (combo > 0) {
+              addFloatingText("STREAK LOST!", "#ff4444");
+              setCombo(0);
+            } else {
+              // Optional: Standard message for classical pass
+              const texts = FLOATING_MESSAGES;
+              const text = texts[Math.floor(Math.random() * texts.length)];
+              addFloatingText(text, 'white');
+            }
+          }
         }
         prevLasersPassedRef.current = gameData.lasers_passed;
-
-        // Auto Panic/Danger Sensing
-        // Check if a laser is very close (y > 60) and in our lane in classical mode
-        if (!gameData.in_superposition && !gameData.paused) {
-          const dangerousLaser = gameData.lasers.find(l =>
-            l.universe === 'A' &&
-            l.y > 60 && l.y < 85 &&
-            l.lane === gameData.car_A.lane
-          );
-          setShowDanger(!!dangerousLaser);
-        } else {
-          setShowDanger(false);
-        }
       }
 
       if (msg.type === 'game_over' || msg.type === 'game_won') {
@@ -227,7 +228,6 @@ function App() {
     setFinalProgress(0);
     setCombo(0);
     setFloatingTexts([]);
-    setShowDanger(false);
     prevLasersPassedRef.current = 0;
     setGameState('MENU');
     setTimeout(() => setGameState('PLAYING'), 50);
@@ -607,14 +607,7 @@ function App() {
               )
             }
 
-            {/* Danger Hint */}
-            {
-              showDanger && (
-                <div className="danger-hint">
-                  ⚠️ DANGER! PRESS <span className="key-hint">H</span> !
-                </div>
-              )
-            }
+
 
             {/* Floating Texts */}
             {

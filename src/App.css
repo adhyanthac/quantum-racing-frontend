@@ -978,6 +978,7 @@ body {
   height: 200%;
   width: 4%;
   z-index: 1;
+  will-change: transform;
 }
 
 .left-shoulder {
@@ -1015,15 +1016,16 @@ body {
       rgba(255, 255, 255, 0.04) 15px,
       rgba(255, 255, 255, 0.04) 16px);
   animation: road-scroll 0.5s linear infinite;
+  will-change: transform;
 }
 
 @keyframes road-scroll {
   0% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   100% {
-    transform: translateY(-50%);
+    transform: translate3d(0, -50%, 0);
   }
 }
 
@@ -1052,6 +1054,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: visible;
+  will-change: left, opacity;
 }
 
 .car-body {
@@ -2211,41 +2214,6 @@ body {
     }
   }
 
-  /* Floating Text */
-  /* Floating Text - Tilted Side Pop */
-  .floating-text {
-    position: absolute;
-    font-family: 'Russo One', sans-serif;
-    font-size: 2.5rem;
-    text-shadow: 3px 3px 0 #000;
-    pointer-events: none;
-    z-index: 200;
-    animation: side-float-pop 1.5s forwards;
-    white-space: nowrap;
-    text-transform: uppercase;
-    font-style: italic;
-  }
-
-  @keyframes side-float-pop {
-    0% {
-      opacity: 0;
-      transform: scale(0.5) translateX(50px) rotate(-15deg);
-    }
-
-    15% {
-      opacity: 1;
-      transform: scale(1.2) translateX(0) rotate(-5deg);
-    }
-
-    30% {
-      transform: scale(1) translateX(0) rotate(-5deg);
-    }
-
-    100% {
-      opacity: 0;
-      transform: scale(0.9) translate(-20px, -30px) rotate(-10deg);
-    }
-  }
 
   /* Danger Hint */
   .danger-hint {
@@ -2682,37 +2650,4 @@ body {
   font-size: 1.3rem;
   flex-shrink: 0;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
-}
-
-/* Floating Text - Override */
-.floating-text {
-  animation: side-float-pop 1.5s forwards !important;
-  transform-origin: center !important;
-  text-align: right;
-  right: 5% !important;
-  /* Fixed distance from right edge */
-  left: auto !important;
-  top: 30% !important;
-  /* Hardcoded vertical position range via JS, but let's base it here */
-}
-
-@keyframes side-float-pop {
-  0% {
-    opacity: 0;
-    transform: scale(0.5) translateX(50px) rotate(-15deg);
-  }
-
-  15% {
-    opacity: 1;
-    transform: scale(1.2) translateX(0) rotate(-5deg);
-  }
-
-  30% {
-    transform: scale(1) translateX(0) rotate(-5deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(0.9) translate(-20px, -30px) rotate(-10deg);
-  }
 }

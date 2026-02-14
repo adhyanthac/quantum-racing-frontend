@@ -35,10 +35,6 @@ const NeonKart = ({ color }) => {
           <stop offset="40%" stopColor={color} stopOpacity="1" />
           <stop offset="100%" stopColor={color} stopOpacity="0.6" />
         </linearGradient>
-        <filter id={`neonGlow-${color}`}>
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
       </defs>
 
       {/* ===== FRONT WING ===== */}
@@ -106,8 +102,8 @@ const NeonKart = ({ color }) => {
       <rect x="47" y="125" width="3" height="12" fill="#555" />
 
       {/* ===== EXHAUST GLOW ===== */}
-      <ellipse cx="35" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" filter={`url(#neonGlow-${color})`} />
-      <ellipse cx="45" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" filter={`url(#neonGlow-${color})`} />
+      <ellipse cx="35" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" />
+      <ellipse cx="45" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" />
       <ellipse cx="35" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
       <ellipse cx="45" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
 
@@ -120,8 +116,6 @@ const NeonKart = ({ color }) => {
   );
 };
 
-const FLOATING_MESSAGES = ['NICE!', 'WOOSH!', 'DODGE!', 'SICK!', 'RADICAL!'];
-const QUANTUM_MESSAGES = ['QUANTUM TUNNEL!', 'SUPERPOSITION!', 'ENTANGLED!', 'PURE MATH!', 'GHOST MODE!'];
 
 function App() {
   const [gameState, setGameState] = useState('MENU');
@@ -140,7 +134,7 @@ function App() {
   const [clientId] = useState(() => Math.random().toString(36).substring(7));
 
   // New "Juice" States
-  const [floatingTexts, setFloatingTexts] = useState([]);
+
   const [combo, setCombo] = useState(0);
 
 
@@ -230,21 +224,10 @@ function App() {
           const isQuantum = gameData.in_superposition;
 
           if (isQuantum) {
-            // ONLY increment combo in Quantum Mode
-            const texts = QUANTUM_MESSAGES;
-            const text = texts[Math.floor(Math.random() * texts.length)];
-            addFloatingText(text, 'gold');
             setCombo(prev => prev + 1);
           } else {
-            // Reset combo if passing classically
             if (combo > 0) {
-              addFloatingText("STREAK LOST!", "#ff4444");
               setCombo(0);
-            } else {
-              // Optional: Standard message for classical pass
-              const texts = FLOATING_MESSAGES;
-              const text = texts[Math.floor(Math.random() * texts.length)];
-              addFloatingText(text, 'white');
             }
           }
         }
@@ -330,7 +313,6 @@ function App() {
     setFinalScore(0);
     setFinalProgress(0);
     setCombo(0);
-    setFloatingTexts([]);
     prevLasersPassedRef.current = 0;
     setGameState('MENU');
     setTimeout(() => setGameState('PLAYING'), 50);
@@ -379,21 +361,7 @@ function App() {
     }
   };
 
-  const addFloatingText = (text, color) => {
-    // Spawn on the right side, tilted
-    const id = Date.now();
-    setFloatingTexts(prev => [...prev, {
-      id,
-      text,
-      color,
-      x: 75 + (Math.random() * 10), // Right side (75-85%)
-      y: 20 + (Math.random() * 40), // Middle-ish vertical (20-60%)
-      rotation: -10 + (Math.random() * 20) // Random tilt
-    }]);
-    setTimeout(() => {
-      setFloatingTexts(prev => prev.filter(t => t.id !== id));
-    }, 1500);
-  };
+
 
   const getCarRender = (isGhost = false, opacity = 1) => {
     return (
@@ -708,25 +676,6 @@ function App() {
               )
             }
 
-
-
-            {/* Floating Texts */}
-            {
-              floatingTexts.map(ft => (
-                <div
-                  key={ft.id}
-                  className="floating-text"
-                  style={{
-                    left: `${ft.x}%`,
-                    top: `${ft.y}%`,
-                    color: ft.color,
-                    transform: `rotate(${ft.rotation || -10}deg)`
-                  }}
-                >
-                  {ft.text}
-                </div>
-              ))
-            }
 
             {/* Pause Button - Bottom Right Corner */}
             {

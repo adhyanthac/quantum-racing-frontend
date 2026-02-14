@@ -662,7 +662,9 @@ function App() {
             {/* Rocket Progress Bar - Top */}
             <div className="rocket-progress-bar">
               <div className="rocket-progress-left">
-                <span className="rocket-timer">{Math.max(0, 60 - Math.floor((data?.frame || 0) / 60))}s</span>
+                <span className="rocket-timer">
+                  {data?.total_frames ? Math.ceil((data.total_frames - data.frame) / 60) : 60}s
+                </span>
               </div>
               <div className="rocket-track-wrapper">
                 <div className="rocket-track-bg">

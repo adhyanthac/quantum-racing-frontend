@@ -44,7 +44,7 @@ const NeonKart = ({ color }) => {
       <rect x="3" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
       <rect x="72" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
       {/* Number 16 */}
-      <text x="40" y="28" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="'Rajdhani', sans-serif" fontWeight="900">16</text>
+      <text x="40" y="32" textAnchor="middle" fill="#fff" fontSize="12" fontFamily="'Rajdhani', sans-serif" fontWeight="900" style={{ textShadow: '0px 0px 2px #000' }}>16</text>
 
       {/* ===== FRONT SUSPENSION ARMS ===== */}
       <line x1="14" y1="30" x2="28" y2="38" stroke="#888" strokeWidth="1" />
@@ -263,34 +263,7 @@ function App() {
   }, [gameState, clientId, saveScoreToStorage, combo]);
 
   // Keyboard controls
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (gameState !== 'PLAYING' || gameEndedRef.current) return;
-      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
-      const key = e.key.toLowerCase();
-
-      // H = Enter superposition (Hadamard + CNOT)
-      if (key === 'h') {
-        wsRef.current.send(JSON.stringify({ action: 'hadamard' }));
-      }
-      // A or D = Switch lane (works for all universes)
-      else if (key === 'a' || key === 'd') {
-        wsRef.current.send(JSON.stringify({ action: 'pauli_x_A' }));
-      }
-      // Pause
-      else if (key === 'p' || key === 'escape') {
-        wsRef.current.send(JSON.stringify({ action: 'pause' }));
-      }
-      // L = Switch Laser Universe
-      else if (key === 'l') {
-        wsRef.current.send(JSON.stringify({ action: 'laser_switch' }));
-      }
-    };
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [gameState]);
 
   const handlePause = () => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && !gameEndedRef.current) {
@@ -317,6 +290,42 @@ function App() {
     setGameState('MENU');
     setTimeout(() => setGameState('PLAYING'), 50);
   };
+
+  // Keyboard controls
+  useEffect(() => {
+    const handleKey = (e) => {
+      const key = e.key.toLowerCase();
+
+      // R to Restart (only when game ended)
+      if (gameEndedRef.current && key === 'r') {
+        handleRestart();
+        return;
+      }
+
+      if (gameState !== 'PLAYING' || gameEndedRef.current) return;
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+
+      // H = Enter superposition (Hadamard + CNOT)
+      if (key === 'h') {
+        wsRef.current.send(JSON.stringify({ action: 'hadamard' }));
+      }
+      // A or D = Switch lane (works for all universes)
+      else if (key === 'a' || key === 'd') {
+        wsRef.current.send(JSON.stringify({ action: 'pauli_x_A' }));
+      }
+      // Pause
+      else if (key === 'p' || key === 'escape') {
+        wsRef.current.send(JSON.stringify({ action: 'pause' }));
+      }
+      // L = Switch Laser Universe
+      else if (key === 'l') {
+        wsRef.current.send(JSON.stringify({ action: 'laser_switch' }));
+      }
+    };
+
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [gameState]); // handleRestart is effectively stable in this context
 
   const handleBackToMenu = () => {
     if (wsRef.current) {

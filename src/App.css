@@ -2324,33 +2324,34 @@ body {
   /* Glitch Effect - Stronger */
   .car-avatar.ghost-effect {
     opacity: 0.8;
-    animation: glitch-strong 0.15s infinite;
-    filter: hue-rotate(90deg) drop-shadow(0 0 10px #00e676);
+    animation: glitch-subtle 0.2s infinite;
+    filter: hue-rotate(90deg) drop-shadow(0 0 6px #00e676);
+    will-change: transform;
   }
 
-  @keyframes glitch-strong {
+  @keyframes glitch-subtle {
     0% {
       transform: translate(0) skew(0);
     }
 
     20% {
-      transform: translate(-4px, 4px) skew(-5deg);
+      transform: translate(-1px, 1px) skew(-1deg);
       opacity: 0.9;
     }
 
     40% {
-      transform: translate(4px, -4px) skew(5deg);
-      opacity: 0.6;
+      transform: translate(1px, -1px) skew(1deg);
+      opacity: 0.8;
     }
 
     60% {
-      transform: translate(-2px, 2px) skew(-2deg);
+      transform: translate(-0.5px, 0.5px) skew(0deg);
       opacity: 1;
     }
 
     80% {
-      transform: translate(2px, -2px) skew(2deg);
-      opacity: 0.8;
+      transform: translate(0.5px, -0.5px) skew(0deg);
+      opacity: 0.9;
     }
 
     100% {
@@ -2435,7 +2436,7 @@ body {
     font-size: 3rem;
     color: #f44336;
     text-align: center;
-    margin: 20px 0;
+    margin: 5px 0 20px 0;
     text-shadow: 2px 2px 0 #000;
     animation: shake 0.5s;
   }

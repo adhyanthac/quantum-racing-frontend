@@ -1,10 +1,11 @@
-/* ===== QUANTUM RACING - CINEMATIC STYLE ===== */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Russo+One&family=Inter:wght@400;500;600&display=swap');
+﻿/* ===== QUANTUM RACING - CINEMATIC STYLE ===== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -15,12 +16,13 @@
   --text-white: #ffffff;
   --text-gray: #b0b0b0;
   --font-readable: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Rajdhani', 'Inter', sans-serif;
 }
 
 body {
   background: #0a0a0a;
   color: var(--text-white);
-  font-family: 'Orbitron', 'Arial', sans-serif;
+  font-family: var(--font-readable);
   overflow: hidden;
 }
 
@@ -87,7 +89,7 @@ body {
   top: 50px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Russo One', 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 3.5rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -106,7 +108,7 @@ body {
   top: 115px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
   letter-spacing: 8px;
   color: var(--primary-green);
@@ -195,7 +197,7 @@ body {
 }
 
 .menu-icon-btn .label {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -206,7 +208,7 @@ body {
 /* ===== START BUTTON ===== */
 .start-btn {
   padding: 18px 60px;
-  font-family: 'Russo One', 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 900;
   letter-spacing: 4px;
@@ -320,14 +322,14 @@ body {
 }
 
 .modal h2 {
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   margin-bottom: 25px;
   color: var(--primary-green);
 }
 
 .modal h3 {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   margin: 20px 0 12px;
   color: var(--text-white);
@@ -369,7 +371,7 @@ body {
 }
 
 .key-badge {
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
   padding: 6px 12px;
@@ -399,7 +401,7 @@ body {
 }
 
 .quantum-concept h4 {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   color: #667eea;
   margin-bottom: 10px;
   font-size: 0.95rem;
@@ -450,7 +452,7 @@ body {
 }
 
 .control-title {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
   font-weight: bold;
   color: #fff;
@@ -537,7 +539,7 @@ body {
   width: 100%;
   padding: 15px;
   margin-top: 15px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   color: white;
@@ -756,7 +758,7 @@ body {
 }
 
 .score-rank {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   color: var(--text-gray);
   min-width: 30px;
@@ -773,7 +775,7 @@ body {
 }
 
 .score-value {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--primary-green);
@@ -879,7 +881,7 @@ body {
 }
 
 .time-display {
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   color: var(--primary-green);
   font-weight: 700;
 }
@@ -1273,7 +1275,7 @@ body {
 }
 
 .pause-overlay h2 {
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-size: 3rem;
   color: var(--primary-green);
   margin-bottom: 15px;
@@ -1292,7 +1294,7 @@ body {
 
 .resume-btn {
   padding: 15px 40px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   color: white;
@@ -1309,7 +1311,7 @@ body {
 
 .menu-btn {
   padding: 15px 40px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   color: white;
@@ -1349,7 +1351,7 @@ body {
 }
 
 .win-title {
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.5rem;
   color: #FFD700;
   margin-bottom: 10px;
@@ -1357,7 +1359,7 @@ body {
 }
 
 .lose-title {
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.5rem;
   color: #ff5252;
   margin-bottom: 10px;
@@ -1371,7 +1373,7 @@ body {
 }
 
 .game-over-score {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   color: var(--text-white);
   margin: 10px 0;
@@ -1400,7 +1402,7 @@ body {
 
 .restart-btn {
   padding: 18px 50px;
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   color: white;
   background: linear-gradient(180deg, #5cb85c 0%, #398439 100%);
@@ -1417,7 +1419,7 @@ body {
 
 .menu-btn-alt {
   padding: 15px 40px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   color: var(--text-gray);
   background: transparent;
@@ -1438,7 +1440,7 @@ body {
   position: fixed;
   top: 20px;
   right: 25px;
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 3px;
@@ -1464,7 +1466,7 @@ body {
 
 .control-key {
   padding: 8px 14px;
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   background: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1484,7 +1486,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 25px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
   letter-spacing: 3px;
   background: rgba(0, 0, 0, 0.85);
@@ -1515,7 +1517,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   letter-spacing: 3px;
   padding: 6px 14px;
@@ -1600,7 +1602,7 @@ body {
   bottom: -30px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   color: var(--primary-green);
   background: rgba(0, 0, 0, 0.8);
@@ -1756,7 +1758,7 @@ body {
 .prob-value {
   font-size: 1.4rem;
   color: #fff;
-  font-family: 'Russo One', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   text-shadow: 1px 1px 0 #000;
 }
@@ -1833,7 +1835,7 @@ body {
   background: rgba(0, 0, 0, 0.8);
   padding: 4px 10px;
   border-radius: 6px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   color: var(--primary-green);
   border: 1px solid rgba(76, 175, 80, 0.4);
@@ -1846,7 +1848,7 @@ body {
   top: 35px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
   background: rgba(0, 0, 0, 0.6);
@@ -1879,7 +1881,7 @@ body {
 }
 
 .final-stats .stat-value {
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: bold;
   color: var(--primary-green);
@@ -1914,7 +1916,7 @@ body {
   border: 3px solid rgba(255, 255, 255, 0.3);
   background: rgba(0, 0, 0, 0.7);
   color: white;
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: bold;
   cursor: pointer;
@@ -2006,11 +2008,54 @@ body {
 
   /* Adjust game area for mobile controls */
   .game-area {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 130px);
   }
 
   .pane {
-    padding-bottom: 100px;
+    padding-bottom: 80px;
+  }
+
+  /* Smaller car on mobile */
+  .car-container {
+    width: 45px;
+    height: 110px;
+    bottom: 10%;
+  }
+
+  /* Probability display adjustments */
+  .probability-display {
+    bottom: 1%;
+    padding: 0 5%;
+  }
+
+  .prob-item {
+    padding: 4px 8px;
+    min-width: 45px;
+  }
+
+  .prob-label {
+    font-size: 0.7rem;
+  }
+
+  .prob-value {
+    font-size: 1rem;
+  }
+
+  /* Score HUD */
+  .score-hud {
+    font-size: 0.9rem;
+    top: 50px;
+    left: 10px;
+  }
+
+  /* Lane lines thinner on mobile */
+  .lane-line {
+    width: 2px;
+  }
+
+  /* Split divider thinner */
+  .game-area.split::after {
+    width: 2px;
   }
 
   /* ===== MOBILE MENU RESPONSIVE ===== */
@@ -2160,7 +2205,7 @@ body {
   }
 
   .combo-count {
-    font-family: 'Russo One', sans-serif;
+    font-family: var(--font-display);
     font-size: 5rem;
     color: #ffeb3b;
     text-shadow:
@@ -2175,7 +2220,7 @@ body {
   }
 
   .combo-label {
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.2rem;
     color: #fff;
     background: #ff5722;
@@ -2225,7 +2270,7 @@ body {
     color: white;
     padding: 15px 30px;
     border-radius: 50px;
-    font-family: 'Russo One', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
     border: 4px solid white;
     box-shadow: 0 0 30px #f00;
@@ -2377,7 +2422,7 @@ body {
 
   /* Win/Loss Messages */
   .win-message {
-    font-family: 'Russo One', sans-serif;
+    font-family: var(--font-display);
     font-size: 2.5rem;
     color: #ffeb3b;
     text-align: center;
@@ -2386,7 +2431,7 @@ body {
   }
 
   .crash-message {
-    font-family: 'Russo One', sans-serif;
+    font-family: var(--font-display);
     font-size: 3rem;
     color: #f44336;
     text-align: center;
@@ -2534,14 +2579,62 @@ body {
   }
 
   .mobile-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.3rem;
+    width: 55px;
+    height: 55px;
+    font-size: 1.2rem;
   }
 
   .swap-btn {
-    width: 80px;
-    height: 55px;
+    width: 70px;
+    height: 50px;
+  }
+
+  .car-container {
+    width: 38px;
+    height: 95px;
+  }
+
+  .rocket-progress-bar {
+    height: 34px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .rocket-timer {
+    font-size: 0.65rem;
+  }
+
+  .rocket-percent {
+    font-size: 0.55rem;
+  }
+
+  .rocket-track-icon {
+    font-size: 1rem;
+  }
+
+  .prob-item {
+    padding: 3px 5px;
+    min-width: 35px;
+    border-width: 1px;
+  }
+
+  .prob-label {
+    font-size: 0.6rem;
+    margin-bottom: 1px;
+  }
+
+  .prob-value {
+    font-size: 0.85rem;
+  }
+
+  .universe-label {
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  .avatar-btn {
+    width: 60px !important;
+    height: 60px !important;
   }
 }
 
@@ -2588,7 +2681,7 @@ body {
 }
 
 .rocket-timer {
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
   color: #ff9800;
@@ -2598,7 +2691,7 @@ body {
 }
 
 .rocket-percent {
-  font-family: 'Orbitron', monospace;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 600;
   color: #4CAF50;

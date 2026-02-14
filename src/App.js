@@ -44,7 +44,7 @@ const NeonKart = ({ color }) => {
       <rect x="3" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
       <rect x="72" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
       {/* Number 16 */}
-      <text x="40" y="28" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="'Orbitron', sans-serif" fontWeight="900">16</text>
+      <text x="40" y="28" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="'Rajdhani', sans-serif" fontWeight="900">16</text>
 
       {/* ===== FRONT SUSPENSION ARMS ===== */}
       <line x1="14" y1="30" x2="28" y2="38" stroke="#888" strokeWidth="1" />

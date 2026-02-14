@@ -27,12 +27,12 @@ const NeonKart = ({ color }) => {
       width: '100%',
       height: '100%',
       overflow: 'visible',
-      filter: `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 14px ${color})`
+      filter: `drop-shadow(0 0 3px ${color}80)`
     }}>
       <defs>
         <linearGradient id={`bodyGrad-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
-          <stop offset="40%" stopColor={color} stopOpacity="1" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="40%" stopColor={color} stopOpacity="0.9" />
           <stop offset="100%" stopColor={color} stopOpacity="0.6" />
         </linearGradient>
       </defs>
@@ -102,16 +102,16 @@ const NeonKart = ({ color }) => {
       <rect x="47" y="125" width="3" height="12" fill="#555" />
 
       {/* ===== EXHAUST GLOW ===== */}
-      <ellipse cx="35" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" />
-      <ellipse cx="45" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" />
-      <ellipse cx="35" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
-      <ellipse cx="45" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
+      <ellipse cx="35" cy="148" rx="3" ry="5" fill="#00e5ff" opacity="0.3" />
+      <ellipse cx="45" cy="148" rx="3" ry="5" fill="#00e5ff" opacity="0.3" />
+      <ellipse cx="35" cy="153" rx="2" ry="4" fill="#fff" opacity="0.12" />
+      <ellipse cx="45" cy="153" rx="2" ry="4" fill="#fff" opacity="0.12" />
 
       {/* ===== NEON ACCENT LINES ===== */}
-      <line x1="24" y1="46" x2="22" y2="113" stroke="#fff" strokeWidth="0.6" opacity="0.3" />
-      <line x1="56" y1="46" x2="58" y2="113" stroke="#fff" strokeWidth="0.6" opacity="0.3" />
+      <line x1="24" y1="46" x2="22" y2="113" stroke="#fff" strokeWidth="0.4" opacity="0.15" />
+      <line x1="56" y1="46" x2="58" y2="113" stroke="#fff" strokeWidth="0.4" opacity="0.15" />
       {/* Front wing neon edge */}
-      <line x1="10" y1="30" x2="70" y2="30" stroke="#fff" strokeWidth="0.3" opacity="0.2" />
+      <line x1="10" y1="30" x2="70" y2="30" stroke="#fff" strokeWidth="0.3" opacity="0.1" />
     </svg>
   );
 };

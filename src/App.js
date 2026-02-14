@@ -21,58 +21,104 @@ const AVATARS = [
   '#FFA500'  // Orange
 ];
 
-const NeonKart = ({ color }) => (
-  <svg viewBox="0 0 100 100" className="neon-kart" style={{
-    width: '100%',
-    height: '100%',
-    overflow: 'visible',
-    filter: 'drop-shadow(0 4px 4px rgba(0,0,0,0.5))'
-  }}>
-    <defs>
-      <linearGradient id={`bodyGrad-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor={color} stopOpacity="1" />
-        <stop offset="100%" stopColor={color} stopOpacity="0.6" />
-      </linearGradient>
-    </defs>
+const NeonKart = ({ color }) => {
+  return (
+    <svg viewBox="0 0 80 200" className="neon-kart" style={{
+      width: '100%',
+      height: '100%',
+      overflow: 'visible',
+      filter: `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 14px ${color})`
+    }}>
+      <defs>
+        <linearGradient id={`bodyGrad-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
+          <stop offset="40%" stopColor={color} stopOpacity="1" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.6" />
+        </linearGradient>
+        <filter id={`neonGlow-${color}`}>
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
 
-    {/* Wheels - Rear (Dark rubber) */}
-    <rect x="5" y="65" width="18" height="25" rx="5"
-      fill="#222" stroke="#111" strokeWidth="2" />
-    <rect x="77" y="65" width="18" height="25" rx="5"
-      fill="#222" stroke="#111" strokeWidth="2" />
+      {/* ===== FRONT WING ===== */}
+      <path d="M6,22 L74,22 L70,30 L10,30 Z"
+        fill={color} stroke="#fff" strokeWidth="0.6" opacity="0.85" />
+      {/* Endplates */}
+      <rect x="3" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
+      <rect x="72" y="19" width="5" height="14" rx="1" fill={color} stroke="#fff" strokeWidth="0.4" opacity="0.9" />
+      {/* Number 16 */}
+      <text x="40" y="28" textAnchor="middle" fill="#fff" fontSize="7" fontFamily="'Orbitron', sans-serif" fontWeight="900">16</text>
 
-    {/* Exhaust Pipes */}
-    <path d="M35,85 L35,95 Q40,95 45,95 L45,85" fill="#555" />
-    <path d="M55,85 L55,95 Q60,95 65,95 L65,85" fill="#555" />
+      {/* ===== FRONT SUSPENSION ARMS ===== */}
+      <line x1="14" y1="30" x2="28" y2="38" stroke="#888" strokeWidth="1" />
+      <line x1="66" y1="30" x2="52" y2="38" stroke="#888" strokeWidth="1" />
 
-    {/* Main Body - Solid Color */}
-    <path d="M30,30 L70,30 L80,60 L85,75 L15,75 L20,60 Z"
-      fill={color} stroke="#eee" strokeWidth="1" />
+      {/* ===== FRONT WHEELS ===== */}
+      <rect x="3" y="28" width="10" height="18" rx="2" fill="#111" stroke="#444" strokeWidth="0.8" />
+      <rect x="67" y="28" width="10" height="18" rx="2" fill="#111" stroke="#444" strokeWidth="0.8" />
 
-    {/* Front Wing */}
-    <path d="M15,25 L85,25 L80,35 L20,35 Z"
-      fill={color} stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
+      {/* ===== NARROW NOSE CONE ===== */}
+      <path d="M32,24 L48,24 L50,44 L30,44 Z"
+        fill={`url(#bodyGrad-${color})`} stroke="rgba(255,255,255,0.2)" strokeWidth="0.4" />
 
-    {/* Wheels - Front */}
-    <rect x="8" y="20" width="12" height="20" rx="4"
-      fill="#222" stroke="#111" strokeWidth="2" />
-    <rect x="80" y="20" width="12" height="20" rx="4"
-      fill="#222" stroke="#111" strokeWidth="2" />
+      {/* ===== SLIM MONOCOQUE BODY ===== */}
+      <path d="M26,44 L54,44 L56,75 L58,115 L22,115 L24,75 Z"
+        fill={`url(#bodyGrad-${color})`} stroke="rgba(255,255,255,0.15)" strokeWidth="0.4" />
 
-    {/* Driver Helmet */}
-    <circle cx="50" cy="50" r="11" fill="white" stroke="#333" strokeWidth="2" />
-    {/* Visor */}
-    <path d="M42,48 Q50,45 58,48 L58,52 Q50,55 42,52 Z" fill="#222" />
+      {/* Center neon stripe */}
+      <rect x="38" y="36" width="4" height="82" rx="2" fill="#fff" opacity="0.12" />
 
-    {/* Spoiler/Rear Wing */}
-    <path d="M20,85 L80,85 L85,78 L15,78 Z"
-      fill={color} stroke="#fff" strokeWidth="1" />
+      {/* ===== SIDE PODS (slim) ===== */}
+      <path d="M24,60 L18,65 L20,95 L24,95 Z" fill={color} opacity="0.7" />
+      <path d="M56,60 L62,65 L60,95 L56,95 Z" fill={color} opacity="0.7" />
 
-    {/* Subtle Engine Glow (Instead of massive trail) */}
-    <path d="M38,96 L42,96 L40,105 Z" fill="#00FFFF" opacity="0.8" />
-    <path d="M58,96 L62,96 L60,105 Z" fill="#00FFFF" opacity="0.8" />
-  </svg>
-);
+      {/* ===== COCKPIT / HALO ===== */}
+      <ellipse cx="40" cy="72" rx="10" ry="8" fill="#0a0a0a" stroke="#555" strokeWidth="0.8" />
+      <path d="M32,68 Q40,58 48,68" fill="none" stroke="#999" strokeWidth="2" />
+      {/* Driver helmet */}
+      <circle cx="40" cy="73" r="4.5" fill="#eee" stroke="#bbb" strokeWidth="0.6" />
+      <path d="M36.5,72 Q40,69.5 43.5,72 L43.5,74 Q40,76 36.5,74 Z" fill="#222" />
+
+      {/* ===== REAR WHEELS ===== */}
+      <rect x="1" y="112" width="14" height="26" rx="3" fill="#111" stroke="#444" strokeWidth="0.8" />
+      <rect x="65" y="112" width="14" height="26" rx="3" fill="#111" stroke="#444" strokeWidth="0.8" />
+      {/* Tire treads */}
+      <line x1="8" y1="115" x2="8" y2="135" stroke="#333" strokeWidth="0.5" />
+      <line x1="72" y1="115" x2="72" y2="135" stroke="#333" strokeWidth="0.5" />
+
+      {/* ===== REAR SUSPENSION ===== */}
+      <line x1="22" y1="115" x2="15" y2="120" stroke="#888" strokeWidth="1" />
+      <line x1="58" y1="115" x2="65" y2="120" stroke="#888" strokeWidth="1" />
+
+      {/* ===== ENGINE COVER + SHARK FIN ===== */}
+      <path d="M30,95 L50,95 L48,125 L32,125 Z"
+        fill={color} opacity="0.8" stroke="rgba(255,255,255,0.1)" strokeWidth="0.3" />
+      <rect x="38" y="88" width="4" height="30" rx="1.5" fill={color} opacity="0.6" stroke="rgba(255,255,255,0.15)" strokeWidth="0.4" />
+
+      {/* ===== REAR WING ===== */}
+      <path d="M10,142 L70,142 L73,137 L7,137 Z"
+        fill={color} stroke="#fff" strokeWidth="0.7" />
+      <path d="M14,135 L66,135 L68,132 L12,132 Z"
+        fill={color} stroke="rgba(255,255,255,0.4)" strokeWidth="0.4" />
+      {/* Wing pillars */}
+      <rect x="30" y="125" width="3" height="12" fill="#555" />
+      <rect x="47" y="125" width="3" height="12" fill="#555" />
+
+      {/* ===== EXHAUST GLOW ===== */}
+      <ellipse cx="35" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" filter={`url(#neonGlow-${color})`} />
+      <ellipse cx="45" cy="148" rx="4" ry="7" fill="#00e5ff" opacity="0.5" filter={`url(#neonGlow-${color})`} />
+      <ellipse cx="35" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
+      <ellipse cx="45" cy="153" rx="2.5" ry="5" fill="#fff" opacity="0.25" />
+
+      {/* ===== NEON ACCENT LINES ===== */}
+      <line x1="24" y1="46" x2="22" y2="113" stroke="#fff" strokeWidth="0.6" opacity="0.3" />
+      <line x1="56" y1="46" x2="58" y2="113" stroke="#fff" strokeWidth="0.6" opacity="0.3" />
+      {/* Front wing neon edge */}
+      <line x1="10" y1="30" x2="70" y2="30" stroke="#fff" strokeWidth="0.3" opacity="0.2" />
+    </svg>
+  );
+};
 
 const FLOATING_MESSAGES = ['NICE!', 'WOOSH!', 'DODGE!', 'SICK!', 'RADICAL!'];
 const QUANTUM_MESSAGES = ['QUANTUM TUNNEL!', 'SUPERPOSITION!', 'ENTANGLED!', 'PURE MATH!', 'GHOST MODE!'];
@@ -245,14 +291,9 @@ function App() {
       if (key === 'h') {
         wsRef.current.send(JSON.stringify({ action: 'hadamard' }));
       }
-      // A or D = Switch lane in Universe A (Pauli-X on qubit A)
+      // A or D = Switch lane (works for all universes)
       else if (key === 'a' || key === 'd') {
         wsRef.current.send(JSON.stringify({ action: 'pauli_x_A' }));
-      }
-      // Arrow keys = Switch lane in Universe B (Pauli-X on qubit B)
-      else if (key === 'arrowleft' || key === 'arrowright') {
-        e.preventDefault();
-        wsRef.current.send(JSON.stringify({ action: 'pauli_x_B' }));
       }
       // Pause
       else if (key === 'p' || key === 'escape') {
@@ -357,7 +398,7 @@ function App() {
   const getCarRender = (isGhost = false, opacity = 1) => {
     return (
       <div
-        className={`car-avatar ${isGhost ? 'ghost-effect' : ''} trail-${settings.carColor}`}
+        className={`car-avatar ${isGhost ? 'ghost-effect' : ''}`}
         style={{ opacity, width: '100%', height: '100%' }}
       >
         <NeonKart color={settings.carColor === 'default' ? '#00FFFF' : settings.carColor} />
@@ -406,13 +447,8 @@ function App() {
                     <span className="control-desc">Move left/right to dodge lasers. In quantum mode, this shifts your probabilities!</span>
                   </div>
                 </div>
-                <div className="control-item">
-                  <span className="key-badge">← / →</span>
-                  <div className="control-info">
-                    <span className="control-title">Universe β Control</span>
-                    <span className="control-desc">In quantum mode, control your second universe's car independently!</span>
-                  </div>
-                </div>
+
+
                 <div className="control-item">
                   <span className="key-badge">L</span>
                   <div className="control-info">
@@ -509,19 +545,7 @@ function App() {
                 ))}
               </div>
             </div>
-            <div className="setting-item">
-              <label className="setting-label">Car Color (Trail)</label>
-              <div className="color-options">
-                {['red', 'blue', 'green', 'yellow', 'purple'].map(color => (
-                  <button
-                    key={color}
-                    className={`color-btn ${color} ${settings.carColor === color ? 'selected' : ''}`}
-                    onClick={() => saveSettings({ ...settings, carColor: color })}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
+
             <div className="setting-item">
               <label className="setting-label">Game Speed</label>
               <div className="speed-options">
@@ -658,18 +682,21 @@ function App() {
               </div>
             )}
 
-            {/* Rocket Progress Bar - Moved to Bottom */}
-            <div className="rocket-progress-container" style={{ top: 'auto', bottom: '30px' }}>
-              <div className="rocket-track">
-                <div
-                  className="rocket-icon"
-                  style={{ left: `${progress}%` }}
-                >
-                  🚀
-                </div>
-                <div className="planet-icon">🪐</div>
+            {/* Rocket Progress Bar - Top */}
+            <div className="rocket-progress-bar">
+              <div className="rocket-progress-left">
+                <span className="rocket-timer">{Math.max(0, 60 - Math.floor((data?.frame || 0) / 60))}s</span>
               </div>
-              <div className="progress-fill-bar" style={{ width: `${progress}%` }}></div>
+              <div className="rocket-track-wrapper">
+                <div className="rocket-track-bg">
+                  <div className="rocket-track-fill" style={{ width: `${progress}%` }}></div>
+                  <div className="rocket-track-icon" style={{ left: `${Math.min(progress, 96)}%` }}>🚀</div>
+                </div>
+                <div className="rocket-track-end">🏁</div>
+              </div>
+              <div className="rocket-progress-right">
+                <span className="rocket-percent">{Math.round(progress)}%</span>
+              </div>
             </div>
 
             {
@@ -701,10 +728,10 @@ function App() {
               ))
             }
 
-            {/* Pause Button */}
+            {/* Pause Button - Bottom Right Corner */}
             {
               !gameEnded && (
-                <button className="pause-btn" onClick={handlePause}>
+                <button className="pause-btn-corner" onClick={handlePause}>
                   {isPaused ? '▶' : '⏸'}
                 </button>
               )
@@ -722,9 +749,14 @@ function App() {
             {/* Game Area - Two Universes */}
             <div className={`game-area ${inSuperposition ? 'split' : ''}`}>
               {/* Universe A */}
-              <div className="pane">
+              <div className="pane road-pane">
+                {/* Animated road surface */}
+                <div className="road-surface">
+                  <div className="road-shoulder left-shoulder"></div>
+                  <div className="road-shoulder right-shoulder"></div>
+                  <div className="road-lines-animated"></div>
+                </div>
                 <div className="universe-label universe-a">UNIVERSE α</div>
-                <div className="controls-hint">A / D</div>
 
                 <div className="lane-lines">
                   <div className="lane-line left"></div>
@@ -803,9 +835,14 @@ function App() {
               {/* Universe B (only visible in superposition) */}
               {
                 inSuperposition && (
-                  <div className="pane">
+                  <div className="pane road-pane">
+                    {/* Animated road surface */}
+                    <div className="road-surface">
+                      <div className="road-shoulder left-shoulder"></div>
+                      <div className="road-shoulder right-shoulder"></div>
+                      <div className="road-lines-animated"></div>
+                    </div>
                     <div className="universe-label universe-b">UNIVERSE β</div>
-                    <div className="controls-hint">← / →</div>
 
                     <div className="lane-lines">
                       <div className="lane-line left"></div>
@@ -875,8 +912,7 @@ function App() {
                 <div className="controls-hud">
                   <div className="control-key"><span>H</span> Superposition</div>
                   <div className="control-key"><span>L</span> Move Laser</div>
-                  <div className="control-key"><span>A/D</span> Universe α</div>
-                  {inSuperposition && <div className="control-key"><span>←/→</span> Universe β</div>}
+                  <div className="control-key"><span>A/D</span> Switch Lane</div>
                 </div>
               )
             }

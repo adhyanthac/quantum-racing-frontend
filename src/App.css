@@ -40,16 +40,7 @@ body {
 }
 
 .game-area {
-  background: linear-gradient(90deg,
-      rgba(255, 0, 0, 0.1),
-      rgba(255, 127, 0, 0.1),
-      rgba(255, 255, 0, 0.1),
-      rgba(0, 255, 0, 0.1),
-      rgba(0, 0, 255, 0.1),
-      rgba(75, 0, 130, 0.1),
-      rgba(148, 0, 211, 0.1));
-  background-size: 200% 200%;
-  animation: rainbow-road 10s ease infinite;
+  background: #1a1a1a;
 }
 
 /* ===== MENU SCREEN ===== */
@@ -947,9 +938,93 @@ body {
 .pane {
   flex: 1;
   position: relative;
-  background: linear-gradient(180deg, #0a0a15 0%, #101020 100%);
+  background: linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
   border: 1px solid rgba(76, 175, 80, 0.3);
   overflow: hidden;
+}
+
+/* Road-like pane background */
+.road-pane {
+  background: linear-gradient(90deg,
+      #1a1a1a 0%,
+      #252525 5%,
+      #333333 8%,
+      #3a3a3a 15%,
+      #404040 30%,
+      #444444 50%,
+      #404040 70%,
+      #3a3a3a 85%,
+      #333333 92%,
+      #252525 95%,
+      #1a1a1a 100%);
+}
+
+/* Road surface */
+.road-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Road shoulders (curbs) */
+.road-shoulder {
+  position: absolute;
+  top: 0;
+  height: 200%;
+  width: 4%;
+  z-index: 1;
+}
+
+.left-shoulder {
+  left: 0;
+  background: repeating-linear-gradient(to bottom,
+      #cc0000 0px,
+      #cc0000 15px,
+      #ffffff 15px,
+      #ffffff 30px);
+  opacity: 0.3;
+  animation: road-scroll 0.6s linear infinite;
+}
+
+.right-shoulder {
+  right: 0;
+  background: repeating-linear-gradient(to bottom,
+      #cc0000 0px,
+      #cc0000 15px,
+      #ffffff 15px,
+      #ffffff 30px);
+  opacity: 0.3;
+  animation: road-scroll 0.6s linear infinite;
+}
+
+/* Animated road surface texture lines */
+.road-lines-animated {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: repeating-linear-gradient(to bottom,
+      transparent 0px,
+      transparent 15px,
+      rgba(255, 255, 255, 0.04) 15px,
+      rgba(255, 255, 255, 0.04) 16px);
+  animation: road-scroll 0.5s linear infinite;
+}
+
+@keyframes road-scroll {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
 }
 
 .divider {
@@ -967,11 +1042,9 @@ body {
 /* ===== CSS CARS WITH MULTIPLE COLORS ===== */
 .car-container {
   position: absolute;
-  bottom: 10%;
-  width: 140px;
-  /* Increased from 55px */
-  height: 140px;
-  /* Increased from 100px */
+  bottom: 8%;
+  width: 60px;
+  height: 150px;
   transform: translateX(-50%);
   transition: opacity 0.2s ease;
   z-index: 10;
@@ -979,7 +1052,6 @@ body {
   align-items: center;
   justify-content: center;
   overflow: visible;
-  /* Ensure nothing cuts off the glow */
 }
 
 .car-body {
@@ -1153,28 +1225,32 @@ body {
   z-index: 5;
 }
 
-/* ===== PAUSE BUTTON ===== */
-.pause-btn {
+/* ===== PAUSE BUTTON - CORNER ===== */
+.pause-btn-corner {
   position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
+  top: 65px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  z-index: 100;
+  z-index: 200;
   border: 2px solid rgba(255, 255, 255, 0.2);
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
-.pause-btn:hover {
+.pause-btn-corner:hover {
   background: rgba(76, 175, 80, 0.5);
   border-color: var(--primary-green);
+  transform: scale(1.1);
 }
 
 /* ===== PAUSE OVERLAY ===== */
@@ -1375,11 +1451,11 @@ body {
 /* ===== CONTROLS HUD ===== */
 .controls-hud {
   position: fixed;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 65px;
+  left: 20px;
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  gap: 8px;
   z-index: 100;
 }
 
@@ -1401,7 +1477,7 @@ body {
 /* ===== SUPERPOSITION INDICATOR ===== */
 .superposition-active {
   position: fixed;
-  top: 130px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 25px;
@@ -1415,6 +1491,7 @@ body {
   z-index: 100;
   box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
   animation: pulse-glow 1.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes pulse-glow {
@@ -1432,15 +1509,18 @@ body {
 /* ===== UNIVERSE LABELS ===== */
 .universe-label {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 2px;
-  padding: 8px 15px;
-  background: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 5px;
-  z-index: 20;
+  z-index: 5;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .universe-a {
@@ -1476,7 +1556,7 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+  background: #1a1a1a;
   overflow: hidden;
 }
 
@@ -1631,7 +1711,7 @@ body {
 /* ===== PROBABILITY DISPLAY ===== */
 .probability-display {
   position: absolute;
-  bottom: 12%;
+  bottom: 2%;
   left: 0;
   width: 100%;
   padding: 0 10%;
@@ -2040,65 +2120,24 @@ body {
 
   /* ===== NEW UI FEATURES ===== */
 
-  /* Rocket Progress Bar - Improved */
-  .rocket-progress-container {
-    position: absolute;
-    /* Moved to bottom via inline style in JS, but default here */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 600px;
-    height: 40px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    border-radius: 20px;
-    padding: 0 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  /* Rocket progress bar - mobile adjustments */
+  .rocket-progress-bar {
+    width: 92%;
+    height: 38px;
+    padding: 0 10px;
+    top: 6px;
   }
 
-  .rocket-track {
-    position: relative;
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    top: 50%;
-    transform: translateY(-50%);
+  .rocket-track-icon {
+    font-size: 1.3rem;
   }
 
-  .progress-fill-bar {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #ff9800, #ff5722, #f44336);
-    border-radius: 3px;
-    transform: translateY(-50%);
-    transition: width 0.1s linear;
-    box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+  .rocket-timer {
+    font-size: 0.75rem;
   }
 
-  .rocket-icon {
-    position: absolute;
-    top: -20px;
-    /* Adjust to center vertically on track */
-    font-size: 2.5rem;
-    transform: translateX(-50%) rotate(45deg);
-    /* Point rocket forward */
-    transition: left 0.1s linear;
-    filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.8));
-    z-index: 2;
-  }
-
-  .planet-icon {
-    position: absolute;
-    right: -25px;
-    top: -15px;
-    font-size: 2rem;
-    filter: drop-shadow(0 0 10px rgba(100, 181, 246, 0.6));
+  .rocket-percent {
+    font-size: 0.65rem;
   }
 
   /* Combo Meter */
@@ -2452,31 +2491,13 @@ body {
     top: 50px;
   }
 
-  /* Pause button - Bottom Left */
-  .pause-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    top: auto;
-    right: auto;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid white;
-    color: white;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 900;
-    transition: all 0.2s;
-  }
-
-  .pause-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1);
+  /* Pause button - Top Right */
+  .pause-btn-corner {
+    top: 55px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
   }
 
 
@@ -2488,8 +2509,7 @@ body {
 
   /* Universe labels */
   .universe-label {
-    font-size: 0.7rem;
-    top: 8px;
+    font-size: 0.6rem;
   }
 
   .controls-hint {
@@ -2566,51 +2586,102 @@ body {
   margin: 5px;
 }
 
-/* ===== CAR TRAIL GLOWS - INTENSIFIED ===== */
-/* Using both drop-shadow for the shape and a box-shadow approach won't work on emoji directly, 
-   so we rely on heavy drop-shadows and maybe a pseudo element if we could, 
-   but filter is best for transparency preservation. */
 
-/* ===== CAR TRAIL GLOWS - FIX ===== */
-/* Combine base shadow with color glow to ensure visibility */
-.trail-red {
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #ff0000) drop-shadow(0 0 40px #ff0000);
-}
 
-.trail-blue {
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #0088ff) drop-shadow(0 0 40px #0088ff);
-}
-
-.trail-green {
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #00ff00) drop-shadow(0 0 40px #00ff00);
-}
-
-.trail-yellow {
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 40px #ffff00);
-}
-
-.trail-purple {
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px #aa00ff) drop-shadow(0 0 40px #aa00ff);
-}
 
 /* ===== OVERRIDES & FIXES ===== */
 
-/* Rocket Progress Bar - Override */
-.rocket-progress-container {
-  /* top handled by JS inline style */
-  /* bottom handled by JS inline style */
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 80% !important;
-  max-width: 600px !important;
-  height: 40px !important;
-  z-index: 1000 !important;
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(4px) !important;
-  border-radius: 20px !important;
-  padding: 0 20px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) !important;
+/* ===== NEW ROCKET PROGRESS BAR ===== */
+.rocket-progress-bar {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  max-width: 700px;
+  height: 44px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 22px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.rocket-progress-left,
+.rocket-progress-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.rocket-timer {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ff9800;
+  min-width: 32px;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 152, 0, 0.5);
+}
+
+.rocket-percent {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4CAF50;
+  min-width: 36px;
+  text-align: center;
+}
+
+.rocket-track-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.rocket-track-bg {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  position: relative;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.rocket-track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ff9800, #ff5722, #f44336);
+  border-radius: 5px;
+  transition: width 0.2s linear;
+  box-shadow: 0 0 12px rgba(255, 87, 34, 0.5);
+}
+
+.rocket-track-icon {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  font-size: 1.6rem;
+  transition: left 0.2s linear;
+  filter: drop-shadow(0 0 6px rgba(255, 100, 0, 0.8));
+  z-index: 2;
+  line-height: 1;
+}
+
+.rocket-track-end {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
 }
 
 /* Floating Text - Override */
